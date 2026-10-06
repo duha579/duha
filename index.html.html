@@ -1,0 +1,1306 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buckler Dashboard – muhaj_baghdad (C00829)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&amp;family=Noto+Kufi+Arabic:wght@700&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F2F4;--panel:#FFFFFF;--panel-2:#F6F6F7;--ink:#222529;--muted:#5F6368;--line:#DCDDE0;
+  --accent:#D0262E;--accent-ink:#FFFFFF;--accent-soft:#FCEBEC;
+  --s1:#8A98A8;--s2:#E0A21B;--s3:#D0262E;--s4:#7A1218;
+  --good:#2E9A55;--bad:#D0262E;
+  --display:"Open Sans","Segoe UI",system-ui,sans-serif;
+  --body:"Open Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#101215;--panel:#1A1D21;--panel-2:#23272C;--ink:#E8EAED;--muted:#A9AEB5;--line:#30353B;
+    --accent:#EF4B53;--accent-ink:#FFFFFF;--accent-soft:#3A1C1F;
+    --s1:#95A3B2;--s2:#E8B23A;--s3:#EF4B53;--s4:#FF8A90;
+    --good:#5CC985;--bad:#EF4B53;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101215;--panel:#1A1D21;--panel-2:#23272C;--ink:#E8EAED;--muted:#A9AEB5;--line:#30353B;
+  --accent:#EF4B53;--accent-ink:#FFFFFF;--accent-soft:#3A1C1F;
+  --s1:#95A3B2;--s2:#E8B23A;--s3:#EF4B53;--s4:#FF8A90;
+  --good:#5CC985;--bad:#EF4B53;color-scheme:dark;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 90px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1320px;margin:0 auto;padding:22px clamp(12px,3vw,32px) 56px}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.005em;margin:0;line-height:1.1}
+h1{font-size:clamp(28px,4vw,40px)}
+h2{font-size:23px}
+h3{font-size:18px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.top p{margin:4px 0 0;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:7px 12px;cursor:pointer;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.link{border:0;background:none;padding:2px 0;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.refreshed{font-size:13px;color:var(--muted)}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.menu{position:relative}
+.menu-list{position:absolute;right:0;top:calc(100% + 4px);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;min-width:230px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.14);display:none}
+.menu.open .menu-list{display:block}
+.menu-list button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:4px;cursor:pointer}
+.menu-list button:hover{background:var(--panel-2)}
+.menu-list .hint{font-size:12px;color:var(--muted);padding:6px 10px 2px}
+
+/* filters */
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;margin-bottom:18px}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f label{font-size:12px;color:var(--muted);font-weight:500}
+.f select,.f input{border:1px solid var(--line);background:var(--panel-2);border-radius:4px;padding:6px 8px;font-size:14px;min-width:0}
+.f select{max-width:190px}
+.f input[type=date]{width:150px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+.chips:empty{display:none}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:3px 6px 3px 11px;font-size:13px;border:0;cursor:pointer}
+.chip span{font-weight:600}
+.chip i{font-style:normal;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;background:var(--panel)}
+
+/* briefing */
+.brief{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;margin-bottom:18px}
+.brief-text{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px 22px}
+.brief-text p{font-size:18px;line-height:1.55;margin:10px 0 0;max-width:68ch}
+.brief-text b{font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.kpi{padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:default}
+.kpi:nth-child(3n){border-right:0}
+.kpi:nth-last-child(-n+3){border-bottom:0}
+.kpi .v{font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+.kpi .l{font-size:13px;color:var(--muted);margin-top:4px}
+.kpi .d{font-size:12.5px;margin-top:6px;font-weight:500}
+.kpi button{all:unset;cursor:pointer;display:block}
+.kpi button:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.up-bad,.down-bad{color:var(--bad)}.up-good,.down-good{color:var(--good)}.flat{color:var(--muted)}
+
+/* layout */
+.row{display:grid;gap:18px;margin-bottom:18px}
+.r-2-1{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+.r-1-1{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px;min-width:0}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.ph p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+.scroll{overflow-x:auto}
+
+/* svg chart */
+svg text{fill:var(--muted);font-family:var(--body);font-size:11px}
+.g-line{stroke:var(--line)}
+.t-bar{fill:var(--accent);cursor:pointer}
+.t-hc{fill:var(--s3);pointer-events:none}
+.t-bar-g:hover .t-bar,.t-bar-g:focus .t-bar{fill:var(--ink)}
+.t-bar-g:focus{outline:none}
+.t-prev{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:5 4}
+.t-dot{fill:var(--panel);stroke:var(--muted);stroke-width:2}
+
+/* category bars */
+.cat{display:grid;grid-template-columns:minmax(110px,160px) minmax(0,1fr) 34px 62px;gap:10px;align-items:center;padding:6px 6px;border-radius:4px;cursor:pointer;border:0;background:none;width:100%;text-align:left}
+.cat:hover{background:var(--panel-2)}
+.cat.sel{background:var(--accent-soft)}
+.cat .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stack{display:flex;height:14px;border-radius:2px;overflow:hidden;background:var(--panel-2)}
+.stack i{display:block;height:100%}
+.cat .n{font-family:var(--display);font-size:18px;font-weight:600;text-align:right}
+.cat .dl{font-size:12px;text-align:right}
+.s1{background:var(--s1)}.s2{background:var(--s2)}.s3{background:var(--s3)}.s4{background:var(--s4)}
+
+/* heatmap: the centrepiece */
+.heat{border-collapse:separate;border-spacing:3px;width:100%;min-width:620px}
+.heat th{font-weight:500;font-size:12.5px;color:var(--muted);text-align:left;padding:2px 6px;white-space:nowrap}
+.heat thead th{text-align:center;vertical-align:bottom}
+.heat td{padding:0}
+.hc{width:100%;height:46px;border:0;border-radius:3px;cursor:pointer;font-family:var(--display);font-size:20px;font-weight:600;position:relative;color:var(--ink)}
+.hc.zero{color:transparent;cursor:default}
+.hc.sel{outline:3px solid var(--ink);outline-offset:-1px}
+.hc.rec::after{content:"";position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--s3);box-shadow:0 0 0 2px var(--panel)}
+.heat .tot{font-family:var(--display);font-size:16px;color:var(--muted);text-align:center}
+
+/* severity / resolution */
+.resrow{display:grid;grid-template-columns:78px minmax(0,1fr) 110px;gap:10px;align-items:center;margin:9px 0}
+.rtrack{position:relative;height:16px;background:var(--panel-2);border-radius:2px}
+.rbar{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.rtarget{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.resrow .t{font-size:12.5px;color:var(--muted);text-align:right}
+
+table.data{width:100%;border-collapse:collapse;font-size:13.5px}
+table.data th{font-size:12.5px;color:var(--muted);font-weight:600;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.data td{padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.data tr.click{cursor:pointer}
+table.data tr.click:hover td{background:var(--panel-2)}
+table.data th.sortable{cursor:pointer;user-select:none}
+table.data th.sortable:hover{color:var(--ink)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;white-space:nowrap}
+.pill .sw{border-radius:50%;width:9px;height:9px}
+.st{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;display:inline-block}
+.st-Open{background:color-mix(in srgb,var(--s3) 20%,transparent);color:var(--ink)}
+.st-In{background:color-mix(in srgb,var(--s2) 24%,transparent);color:var(--ink)}
+.st-Resolved{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--ink)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.tab{border:0;background:none;padding:8px 12px;cursor:pointer;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.issue{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left}
+.issue:hover{background:var(--panel-2)}
+.issue .a{font-weight:600;font-size:14px}
+.issue .b{font-size:13px;color:var(--muted)}
+.issue .c{text-align:right;font-size:13px}
+
+.recs{display:grid;gap:0}
+.rec{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:6px 18px;padding:14px 0;border-top:1px solid var(--line);align-items:start}
+.rec:first-child{border-top:0}
+.prio{font-family:var(--display);font-size:17px;font-weight:600}
+.prio.p0{color:var(--bad)}.prio.p1{color:var(--s3)}.prio.p2{color:var(--accent)}
+.rec h3{font-family:var(--body);font-size:15.5px;font-weight:600;letter-spacing:0}
+.rec p{margin:4px 0 0;font-size:14px;color:var(--muted);max-width:78ch}
+
+.tbl-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tbl-tools input{border:1px solid var(--line);background:var(--panel-2);border-radius:4px;padding:6px 10px;width:230px;max-width:100%}
+.pager{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted);gap:10px;flex-wrap:wrap}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,18,24,.4);z-index:40;display:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:var(--panel);z-index:41;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.open{transform:none}
+.scrim.open{display:block}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 20px 12px;border-bottom:1px solid var(--line);gap:10px}
+.db{padding:16px 20px 30px;overflow:auto}
+.dl-grid{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:14px;margin:0 0 16px}
+.dl-grid dt{color:var(--muted)}
+.dl-grid dd{margin:0}
+.timeline{list-style:none;padding:0;margin:8px 0 18px;border-left:2px solid var(--line)}
+.timeline li{padding:0 0 12px 14px;position:relative;font-size:14px}
+.timeline li::before{content:"";position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.timeline li.pending::before{background:var(--panel);border:2px solid var(--muted)}
+.callout{background:var(--panel-2);border-radius:4px;padding:10px 12px;font-size:14px;margin:0 0 14px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:10px 16px;border-radius:4px;font-size:14px;z-index:60;display:none;max-width:90vw}
+.toast.show{display:block}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+.src{font-size:12.5px;color:var(--muted);background:var(--panel-2);border-radius:999px;padding:3px 10px}
+
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 24px));max-height:calc(100% - 40px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;z-index:51;padding:20px 22px;display:none}
+.modal.open{display:block}
+#pdfScrim{z-index:50}
+.plog{list-style:none;padding:0;margin:14px 0;font-size:14px}
+.plog li{padding:8px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.plog .fn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plog .ok{color:var(--good)}.plog .err{color:var(--bad)}
+.drop{border:2px dashed var(--line);border-radius:6px;padding:18px;text-align:center;color:var(--muted);font-size:14px;margin:12px 0}
+.drop.over,body.dragging .drop{border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
+.qrm{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;text-decoration:underline}
+.pagedrop{position:fixed;inset:0;z-index:70;background:color-mix(in srgb,var(--accent) 22%,transparent);border:4px dashed var(--accent);display:none;place-items:center;font-family:var(--display);font-size:30px;color:var(--ink);pointer-events:none}
+body.dragging .pagedrop{display:grid}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.issue .a,#dTitle,.dl-grid dd{unicode-bidi:plaintext}
+@media (max-width:1050px){.brief,.r-2-1,.r-1-1{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:620px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}
+  .kpi:nth-child(2n){border-right:0!important}
+  .kpi:nth-last-child(-n+2){border-bottom:0!important}
+  .rec{grid-template-columns:minmax(0,1fr)}
+  .cat{grid-template-columns:minmax(90px,120px) minmax(0,1fr) 30px 52px}
+  .filters{position:static}
+  .f select{max-width:none}
+  .brief-text p{font-size:16.5px}
+}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+@media print{.filters,.actions,.tbl-tools,.pager,.drawer,.scrim{display:none!important}body{background:#fff}}
+
+.heat.mx{min-width:0;width:auto}
+.mx thead th{font-size:12px;padding:2px 2px}
+.mx tbody th{min-width:230px;max-width:320px;white-space:normal;padding:6px 8px}
+.mx td{text-align:center;padding:2px 3px}
+.mxc{display:inline-block;width:24px;height:24px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);vertical-align:middle}
+.mxc.on{border-color:transparent}
+.mxrow{cursor:pointer}
+.mxrow:hover th,.mxrow:hover td{background:var(--panel-2)}
+.colbtn{all:unset;cursor:pointer;font-size:12px;line-height:1.25;text-align:center;display:block;padding:3px 5px;border-radius:3px;color:var(--ink);white-space:nowrap}
+.colbtn:hover,.colbtn:focus-visible{background:var(--accent-soft)}
+.stations{display:grid;grid-template-columns:repeat(auto-fill,minmax(22px,1fr));gap:3px}
+.stn{aspect-ratio:1;border:0;border-radius:2px;background:var(--panel-2);padding:0;font:600 9px/1 var(--body);color:#fff;cursor:default}
+.stn.on{cursor:pointer}
+.stn.on:hover{outline:2px solid var(--ink)}
+.st-Ongoing{background:color-mix(in srgb,var(--s3) 22%,transparent);color:var(--ink)}
+.st-Watch{background:color-mix(in srgb,var(--s2) 28%,transparent);color:var(--ink)}
+.st-Resolved{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--ink)}
+
+/* Buckler brand layer */
+.top{border-bottom:4px solid var(--accent);padding-bottom:16px;margin-bottom:18px}
+.brandrow{display:flex;align-items:center;gap:14px}
+.brandrow h1{color:var(--accent);font-size:clamp(22px,3.2vw,30px);letter-spacing:.02em}
+.brandrow .ar{font-family:"Noto Kufi Arabic",sans-serif;font-size:12.5px;color:var(--muted)}
+.filters{border-top:3px solid var(--accent);border-radius:8px}
+.panel{border-radius:10px}
+.panel>.ph h2{border-left:4px solid var(--accent);padding-left:10px;font-size:19px}
+.brief-text h2{border-left:4px solid var(--accent);padding-left:10px;font-size:19px}
+.kpis{border-radius:10px;overflow:hidden}
+.btn{border-radius:6px}
+.menu-list .sep{height:1px;background:var(--line);margin:6px 4px}
+.menu-list .how{font-size:12.5px;color:var(--ink);padding:8px 10px;background:var(--panel-2);border-radius:6px;margin:2px 2px 6px;line-height:1.45}
+.menu-list .how b{color:var(--accent)}
+.mxc.on{box-shadow:0 0 0 3px color-mix(in srgb,var(--s3) 12%,transparent)}
+[hidden]{display:none!important}
+body{font-size:15.5px;line-height:1.6}
+.wrap{max-width:1240px}
+.panel,.brief-text,.kpis{box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 18px rgba(0,0,0,.035);border-color:color-mix(in srgb,var(--line) 80%,transparent)}
+.panel{padding:20px 22px}
+.row,.brief{gap:20px;margin-bottom:22px}
+section.panel{margin-bottom:22px!important}
+.panel>.ph{margin-bottom:14px}
+.panel>.ph h2,.brief-text h2{font-size:20px;letter-spacing:0}
+.ph p{font-size:13.5px;line-height:1.5;margin-top:4px}
+.brief-text{padding:22px 26px}
+.brief-text p{font-size:17px;line-height:1.7;color:var(--ink)}
+.brief-text b{color:var(--accent);font-weight:700}
+.kpi{padding:16px 18px}
+.kpi .v{font-size:34px}
+.kpi .l{font-size:13.5px;color:var(--ink);font-weight:600}
+.kpi .d{font-size:12.5px}
+.st{font-size:12.5px;padding:3px 10px}
+.st-Ongoing{background:color-mix(in srgb,var(--s3) 14%,transparent);color:var(--s3)}
+.st-Watch{background:color-mix(in srgb,var(--s2) 20%,transparent);color:color-mix(in srgb,var(--s2) 65%,var(--ink))}
+.st-Resolved{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+.issue{padding:12px 6px}
+.issue .a{font-size:15px}
+.rec{padding:15px 0}
+.rec h3{font-size:16px}
+.rec p{font-size:14.5px;line-height:1.55}
+.prio{font-size:15px;font-weight:700}
+table.data{font-size:14px}
+table.data th{font-size:12.5px;text-transform:none}
+.row.solo{grid-template-columns:minmax(0,1fr)!important}
+.mx tbody th{font-size:14px;font-weight:600}
+.filters{gap:12px 16px;padding:12px 16px}
+@media (max-width:620px){.brief-text p{font-size:16px}.panel{padding:16px}.lockinfo{border-right:0;border-bottom:1px solid var(--line);padding:0 0 10px;margin:0;width:100%}}
+.ownerlink{font-size:12.5px;color:var(--muted)!important;text-decoration:none!important;padding:4px 6px!important}
+.ownerlink:hover{color:var(--accent)!important}
+.ownerbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#222529;color:#fff;border-radius:8px;padding:9px 12px;margin:0 0 14px;font-size:13.5px}
+.ownerbar b{color:#FF9AA0}.ownerbar .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.pinw{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:90;display:grid;place-items:center;padding:16px}
+.pinbox{background:var(--panel);border-radius:12px;padding:20px 22px;width:min(360px,100%);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.pinbox h3{font-size:18px;margin-bottom:6px;color:var(--accent)}
+.pinbox p{font-size:13.5px;color:var(--muted);margin:0 0 12px}
+.pinbox input{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:16px;margin-bottom:8px;background:var(--panel-2);color:var(--ink);letter-spacing:.2em}
+.pinerr{color:var(--bad);font-size:13px;min-height:18px}
+.pinact{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.lockinfo{min-width:220px;padding-right:10px;border-right:1px solid var(--line);margin-right:4px}
+.lockinfo div{font-size:14px;line-height:1.35}
+.lockinfo b{color:var(--accent)}
+.lockinfo span{color:var(--muted);font-size:13px}
+.tapnote{display:flex;align-items:center;gap:10px;background:var(--accent-soft);color:var(--ink);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);border-radius:8px;padding:9px 12px;margin:0 0 14px;font-size:14px}
+.tapnote svg{color:var(--accent);flex:none}
+.tapnote b{color:var(--accent)}
+.tapnote span{flex:1}
+.tapnote button{border:0;background:none;font-size:20px;line-height:1;cursor:pointer;color:var(--muted);padding:0 4px}
+.share-box{background:var(--panel-2);border-radius:8px;padding:10px;margin:2px 2px 8px}
+.sb-t{font-size:12.5px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.sb-row{display:flex;gap:6px;margin-bottom:6px}
+.sb-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;background:var(--panel);color:var(--ink)}
+.sb-row .btn{text-decoration:none;justify-content:center;flex:1}
+.sb-row .btn.primary{flex:none}
+.sb-n{font-size:11.5px;color:var(--muted);line-height:1.4}
+.menu-list .share-box a.btn{display:inline-flex;width:auto;text-align:center;padding:6px 10px}
+.menu-list .share-box button.btn{display:inline-flex;width:auto;padding:6px 12px}
+.menu-list .share-box button.btn.primary{background:var(--accent);color:#fff;border:1px solid var(--accent);font-weight:600}
+.menu-list .share-box button.btn.primary:hover{background:var(--s4)}
+.menu-list .share-box a.btn{color:var(--ink);background:var(--panel);border:1px solid var(--line)}
+.menu-list .share-box a.btn:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brandrow">
+      <svg width="44" height="50" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 1 28 5v11c0 8.5-5.6 14.3-13 17C7.6 30.3 2 24.5 2 16V5z" fill="var(--accent)"></path><path d="M8 11h12.5a3 3 0 0 1 0 6H8zm0 8h13a3 3 0 0 1 0 6H8z" fill="#fff"></path><rect x="8" y="16.2" width="15" height="1.6" fill="var(--accent)"></rect></svg>
+      <div><h1>Sanitation dashboard</h1><p id="subtitle">Loading…</p><div class="ar">الدرع للخدمات العامة · Buckler Pest Control</div></div>
+    </div>
+    <div class="actions">
+      <span class="src" id="srcLabel"></span>
+      <span class="refreshed" id="refreshed"></span>
+      <button class="btn" id="pdfBtn">Upload PDF reports</button>
+      <button class="btn" id="refreshBtn" title="Recalculate every view from the loaded reports">Refresh</button>
+      <div class="menu" id="dataMenu">
+        <button class="btn" aria-haspopup="true" aria-expanded="false" data-menu="">Reports</button>
+        <div class="menu-list" role="menu">
+          <div class="hint">Loaded reports</div>
+          <div id="reportList"></div>
+          <button role="menuitem" id="resetBtn">Remove uploaded reports</button>
+        </div>
+      </div>
+      <div class="menu" id="exportMenu">
+        <button class="btn primary" aria-haspopup="true" aria-expanded="false" data-menu="">Share / Download</button>
+        <div class="menu-list" role="menu" style="min-width:270px">
+          <div class="share-box" id="shareBox">
+            <div class="sb-t">Share as a link</div>
+            <div class="sb-row"><input id="shareUrl" readonly="" value="https://claude.ai/artifact/56wENo8MrYfudhWEwFtYv8" aria-label="Dashboard link"><button class="btn primary" id="copyLink" type="button">Copy link</button></div>
+            <div class="sb-row"><a class="btn" id="waLink" target="_blank" rel="noopener" href="https://wa.me/?text=Buckler%20sanitation%20dashboard%20%E2%80%94%20tap%20to%20open%20and%20explore%20every%20detail%3A%20https://claude.ai/artifact/56wENo8MrYfudhWEwFtYv8">WhatsApp</a><a class="btn" id="mailLink" target="_blank" rel="noopener" href="mailto:?subject=Buckler%20sanitation%20dashboard&amp;body=Hello%2C%0A%0AHere%20is%20your%20interactive%20sanitation%20dashboard%20from%20Buckler%20Pest%20Control.%20Open%20the%20link%20and%20tap%20any%20item%20to%20see%20its%20details%3A%0A%0Ahttps://claude.ai/artifact/56wENo8MrYfudhWEwFtYv8">Email</a></div>
+            <div class="sb-n">The client sees a view-only dashboard. The first time, turn on link access with the Share button at the top of this page so people outside your account can open it.</div>
+          </div>
+          <div class="sb-t" style="padding:4px 10px 0">Share as a file</div>
+          <button role="menuitem" data-export="pdf" data-dl="">PDF report, clickable details (.pdf)</button>
+          <button role="menuitem" data-export="client" data-dl="">Client file: view + owner login (.html)</button>
+          <button role="menuitem" data-export="app" data-dl="">Interactive dashboard file (.html)</button>
+          <button role="menuitem" data-export="html" data-dl="">Summary page (.html)</button>
+          <div class="sep"></div>
+          <button role="menuitem" data-export="csv" data-dl="">Findings table (.csv)</button>
+          <button role="menuitem" data-export="json" data-dl="">All report data (.json)</button>
+          <div class="hint" id="exportHint">Files follow the period and filters you have set.</div>
+        </div>
+      </div>
+      <button class="btn link ownerlink" id="ownerBtn" hidden="" title="For Buckler staff">Staff login</button>
+      <input type="file" id="pdfInput" accept=".pdf,application/pdf" multiple="" hidden="">
+    </div>
+  </header>
+
+  <div class="tapnote" id="tapNote"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M8 2v9l-2-2-1.5 1.5L9 15h6l1-6-4-1V2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path></svg><span><b>Everything here is clickable.</b> Tap any number, problem, square, bar, visit or bait station to see its full details and history.</span><button type="button" id="tapX" aria-label="Hide this tip">×</button></div>
+  <div class="ownerbar" id="ownerBar" hidden=""><span></span><button class="btn" id="ownerBack" type="button">Back to client view</button></div>
+  <section class="filters" aria-label="Filters">
+    <div class="f"><label for="fPreset">Period</label>
+      <select id="fPreset">
+        <option value="latest" selected="">Latest report month</option>
+        <option value="3m">Last 3 months</option>
+        <option value="6m">Last 6 months</option>
+        <option value="all">All reports</option>
+        <option value="custom">Custom range</option>
+      </select></div>
+    <div class="f"><label for="fFrom">From</label><input type="date" id="fFrom"></div>
+    <div class="f"><label for="fTo">To</label><input type="date" id="fTo"></div>
+    <div class="f"><label for="fClient">Client</label><select id="fClient" data-key="client"></select></div>
+    <div class="f"><label for="fCategory">Issue type</label><select id="fCategory" data-key="category"></select></div>
+    <div class="f"><label for="fPest">Pest</label><select id="fPest" data-key="pest"></select></div>
+    <div class="f"><label for="fLocation">Location</label><select id="fLocation" data-key="location"></select></div>
+    <div class="f"><label for="fSeverity">Severity</label><select id="fSeverity" data-key="severity"></select></div>
+    <div class="f"><label for="fStatus">Status</label><select id="fStatus" data-key="status"></select></div>
+    <button class="btn link" id="clearBtn">Clear filters</button>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <section class="brief">
+    <div class="brief-text">
+      <h2>At a glance</h2>
+      <div id="briefing"></div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section class="panel" style="margin-bottom:18px">
+    <div class="ph"><div><h2>Problems visit by visit</h2><p>Each row is a problem, each column a visit. A coloured square means it was reported that day. Tap a row or a date for details.</p></div>
+      <div class="legend"><span><i class="sw s2"></i>Moderate</span><span><i class="sw s3"></i>High</span><span><i class="sw" style="background:var(--panel-2);border:1px solid var(--line)"></i>Not reported</span></div></div>
+    <div class="scroll" id="matrix"></div>
+    <p class="small muted" style="margin:10px 0 0"><b>Still open:</b> reported at the latest visit. <b>Improving:</b> reported at the visit before, not the latest. <b>Cleared:</b> not reported at either of the last two visits.</p>
+  </section>
+
+  <section class="row r-2-1">
+    <div class="panel">
+      <div class="ph"><div><h2>Pest activity at each visit</h2><p>Bars: devices with activity. Line: problems noted. Tap a visit for details.</p></div>
+        <div class="legend"><span><i class="sw s3"></i>Rodent stations</span><span><i class="sw s4"></i>Snake stations</span><span><i class="sw s2"></i>UV fly machines</span><span><i class="sw" style="background:none;border-top:2px solid var(--accent);height:0;width:16px;border-radius:0"></i>Findings</span></div></div>
+      <div id="trend"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div><h2>Problems by type</h2><p>Tap a type to show only those problems.</p></div></div>
+      <div id="cats"></div>
+      <div class="legend" style="margin-top:10px"><span><i class="sw s1"></i>Low</span><span><i class="sw s2"></i>Moderate</span><span><i class="sw s3"></i>High</span></div>
+    </div>
+  </section>
+
+  <section class="row r-1-1">
+    <div class="panel">
+      <div class="ph"><div><h2>Where rodents took bait</h2><p id="stnNote">Each square is a station. Darker means bait was consumed more often. Click a station for its history.</p></div></div>
+      <div id="stations"></div>
+      <div id="stnTop" style="margin-top:12px"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div><h2>Problems by area</h2><p>Tap an area to show only its problems.</p></div></div>
+      <div id="locs"></div>
+    </div>
+  </section>
+
+  <section class="row r-1-1">
+    <div class="panel">
+      <div class="ph"><div><h2>Your action list</h2><p>Open problems first, most serious at the top. Tap one for evidence and the fix.</p></div></div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-tab="open" id="tabOpen">Unresolved</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="resolved" id="tabResolved">Resolved</button>
+      </div>
+      <div id="issues"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div><h2>What to do next</h2><p>In order of priority.</p></div></div>
+      <div class="recs" id="recs"></div>
+      <div id="general"></div>
+    </div>
+  </section>
+
+  <section class="row r-1-1">
+    <div class="panel">
+      <div class="ph"><div><h2>Compared with the previous period</h2><p id="cmpNote"></p></div>
+        <div class="tabs" role="tablist" style="border:0;margin:0">
+          <button class="tab" role="tab" aria-selected="true" data-cmp="category">Issue type</button>
+          <button class="tab" role="tab" aria-selected="false" data-cmp="issue">Problem</button>
+        </div></div>
+      <div class="scroll" id="cmp"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div><h2>Visits we carried out</h2><p>Every device checked at every visit. Tap a visit for the work done.</p></div></div>
+      <div class="scroll" id="visits"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div><h2>Full findings log</h2><p id="tblNote"></p></div>
+      <div class="tbl-tools"><input type="search" id="q" placeholder="Search findings, locations, stations" aria-label="Search findings"></div></div>
+    <div class="scroll" id="table"></div>
+    <div class="pager" id="pager"></div>
+  </section>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="dTitle">
+  <div class="dh"><div><div class="muted small" id="dSub"></div><h2 id="dTitle"></h2></div><button class="btn" id="dClose" aria-label="Close details">Close</button></div>
+  <div class="db" id="dBody"></div>
+</aside>
+
+<div class="scrim" id="pdfScrim"></div>
+<div class="modal" id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+  <h2 id="pdfTitle">Add your PDF reports</h2>
+  <p class="muted small" id="pdfIntro">Claude reads each monthly report and pulls out the visits, bait station activity, and every problem noted by the team leader, admin or client. This uses your own Claude usage, and you'll be asked to allow it the first time.</p>
+  <div id="pdfStage">
+    <div class="drop" id="pdfDrop">Drag PDF files here, or <button class="btn link" id="pdfAddMore">choose files</button>. Add as many as you like, in one go or a few at a time.</div>
+  </div>
+  <ul class="plog" id="pdfLog"></ul>
+  <div class="callout" id="pdfSummary" hidden=""></div>
+  <div class="modal-actions">
+    <button class="btn" id="pdfStop">Cancel</button>
+    <button class="btn primary" id="pdfStart" hidden="">Read files</button>
+  </div>
+</div>
+<div class="pagedrop" aria-hidden="true">Drop PDF reports to add them</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script id="preload">window.__PRELOAD=[{"id":"C00829|2026-09-01","file":"","client":"muhaj_baghdad","client_code":"C00829","city":"Hilla","provider":"Buckler Pest Control","period_from":"2026-09-01","period_to":"2026-09-30","equipment":{"rodent":25,"snake":0,"uv":0},"visits":[{"date":"2026-09-08","time":"11:30","type":"Regular","leader":"Mahdi Sailh","status":"Conducted","rodent_active":0,"rodent_checked":25,"snake_active":0,"snake_checked":0,"uv_active":0,"uv_checked":0,"active_stations":[],"actions":["Internal and external spraying was carried out, and rodent traps were inspected and monitored"]},{"date":"2026-09-20","time":"10:00","type":"Regular","leader":"Mahdi Sailh","status":"Conducted","rodent_active":0,"rodent_checked":25,"snake_active":0,"snake_checked":0,"uv_active":0,"uv_checked":0,"active_stations":[],"actions":["Conducted internal and external pest control treatment","Inspected and monitored all rodent control stations","Distributed fly bags as required","Installed 50 rodent traps at designated locations","Distributed rodent bait in external areas "]}],"findings":[{"date":"2026-09-08","issue":"Open doors and windows were observed","category":"Other","pest":"General","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"Open doors and windows were observed."},{"date":"2026-09-08","issue":"Drainage openings unsealed","category":"Proofing and openings","pest":"General","location":"Drains","severity":"Moderate","source":"Admin comment","description":"Drain openings were found to be inadequately sealed."},{"date":"2026-09-20","issue":"Doors left open","category":"Site practices","pest":"General","location":"Doors and entrances","severity":"Moderate","source":"Admin comment","description":"Several doors were observed left open"}],"general":["Informing workers not remove traps from the ground during the site cleaning process.","Closing entry points that leads into the structure.","Cleaning the Garbage areas frequently.","it’s important to not move or change the place of rodent’s trap, they have been strategically distributed according to a specific plan to effectively address the issue of rodent control and these traps contain a poisonous bait.","Doors and windows should be kept properly closed to prevent pest entry."]},{"id":"C00829|2026-09-26","file":"","client":"muhaj_baghdad","client_code":"C00829","city":"Hilla","provider":"Buckler Pest Control","period_from":"2026-09-26","period_to":"2026-09-26","equipment":{"rodent":25,"snake":0,"uv":0},"visits":[{"date":"2026-09-26","time":"08:00","type":"Call-back","leader":"Mahdi Sailh","status":"Conducted","rodent_active":0,"rodent_checked":25,"snake_active":0,"snake_checked":0,"uv_active":0,"uv_checked":0,"active_stations":[],"actions":["Internal and external spraying was carried out, and fly bags were inspected and monitored"]}],"findings":[{"date":"2026-09-26","issue":"Fly activity","category":"Client complaint","pest":"Flies","location":"Site-wide","severity":"High","source":"Client comment","description":"Presence of flies was observed at the site."},{"date":"2026-09-26","issue":"Doors left open","category":"Site practices","pest":"General","location":"Doors and entrances","severity":"Moderate","source":"Admin comment","description":"Most doors and windows were observed left open."},{"date":"2026-09-26","issue":"Waste accumulation","category":"Hygiene and waste","pest":"General","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"Waste containers were found overflowing and uncovered."},{"date":"2026-09-26","issue":"Food debris was scattered on the","category":"Other","pest":"General","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"Food debris was scattered on the floor."},{"date":"2026-09-26","issue":"These elements collectively contribute to a","category":"Other","pest":"General","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"These elements collectively contribute to a severe fly infestation risk."}],"general":[]},{"id":"C00829|2026-09-29","file":"","client":"muhaj_baghdad","client_code":"C00829","city":"Hilla","provider":"Buckler Pest Control","period_from":"2026-09-29","period_to":"2026-09-29","equipment":{"rodent":25,"snake":0,"uv":0},"visits":[{"date":"2026-09-29","time":"11:00","type":"Call-back","leader":"Ali Mohammed","status":"Conducted","rodent_active":0,"rodent_checked":25,"snake_active":0,"snake_checked":0,"uv_active":0,"uv_checked":0,"active_stations":[],"actions":["Internal and external spraying were carried out in the administration building and restaurant","Cold fogging treatment was conducted in the restaurant dining hall","Fly bags were inspected and monitored"]}],"findings":[{"date":"2026-09-29","issue":"Fly activity","category":"Client complaint","pest":"Flies","location":"Site-wide","severity":"High","source":"Client comment","description":"Complaint: Flies have been reported in the kitchen, the administration building, and the engineers' accommodation."},{"date":"2026-09-29","issue":"Food residues were observed","category":"Other","pest":"General","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"Food residues were observed."},{"date":"2026-09-29","issue":"Open doors were found on site","category":"Other","pest":"General","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"Open doors were found on site."},{"date":"2026-09-29","issue":"Doors left open","category":"Site practices","pest":"General","location":"Doors and entrances","severity":"Moderate","source":"Admin comment","description":"Kitchen windows were observed to be left open."},{"date":"2026-09-29","issue":"Fly activity","category":"Pest activity","pest":"Flies","location":"Site-wide","severity":"Moderate","source":"Admin comment","description":"Waste bins are full and uncovered, which may contribute to increased fly activity."}],"general":[]}];window.__OVR={};window.__VIEWONLY=true;window.__LOCK={"client":"muhaj_baghdad","from":"2026-09-01","to":"2026-09-30"};window.__PIN="e710c7a5ea68136ec822d4efd3e9582ee7467d54da66453985052847b3f69ff6";</script>
+<script id="app">
+(function(){
+'use strict';
+const SELF_HTML='<!doctype html>\n'+document.documentElement.outerHTML;
+let MODE=window.__VIEWONLY?'viewer':(window.claude&&typeof window.claude.use==='function')?'viewer':'local';
+let artifactNS=null;
+const DAY=864e5, MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const SEVS=['Low','Moderate','High'];
+const SEV_RANK={low:0,minor:0,moderate:1,medium:1,high:2,critical:2,severe:2,major:2};
+const CATS=['Pest activity','Client complaint','Proofing and openings','Site practices','Trap access','Hygiene and waste','Service limitation','Other'];
+const PESTS=['Rodent','Cockroach','Flies','Scorpion','Snake','Ants','Birds','General'];
+const FKEYS=['client','category','pest','location','severity','status'];
+const FLABEL={client:'Client',category:'Issue type',pest:'Pest',location:'Location',severity:'Severity',status:'Status'};
+const LS_KEY='pest-dashboard-reports-v1';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+
+function parseDate(s){if(!s)return null;s=String(s).trim();let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return new Date(+m[1],+m[2]-1,+m[3]);m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);const t=new Date(s);return isNaN(t)?null:new Date(t.getFullYear(),t.getMonth(),t.getDate())}
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)}
+function addMonths(d,n){return new Date(d.getFullYear(),d.getMonth()+n,d.getDate())}
+function diff(a,b){return Math.round((b-a)/DAY)}
+function fmtD(d){return d.getDate()+' '+MON[d.getMonth()]}
+function fmtDY(d){return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function plural(n,w,p){return n+' '+(n===1?w:(p||w+'s'))}
+function pctChange(a,b){if(!b)return a?null:0;return (a-b)/b*100}
+function count(arr,fn){const m=new Map();arr.forEach(x=>{const k=fn(x);m.set(k,(m.get(k)||0)+1)});return m}
+function sevColor(r){return 'var(--s'+(r+1)+')'}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),3400)}
+function titleCase(s){s=String(s||'').trim();return s?s.charAt(0).toUpperCase()+s.slice(1):s}
+
+/* ---------- the report you uploaded, extracted ---------- */
+const SEED=[{"id": "C00829|2026-09-01", "file": "muhaj_baghdad Monthly Report September 2026.pdf", "client": "muhaj_baghdad", "client_code": "C00829", "city": "Hilla", "provider": "Buckler Pest Control", "period_from": "2026-09-01", "period_to": "2026-09-30", "equipment": {"rodent": 25, "snake": 0, "uv": 0}, "visits": [{"date": "2026-09-08", "time": "11:30", "type": "Regular", "leader": "Mahdi Sailh", "status": "Conducted", "rodent_active": 0, "rodent_checked": 25, "snake_active": 0, "snake_checked": 0, "uv_active": 0, "uv_checked": 0, "active_stations": [], "actions": ["Internal and external spraying was carried out, and rodent traps were inspected and monitored"]}, {"date": "2026-09-20", "time": "10:00", "type": "Regular", "leader": "Mahdi Sailh", "status": "Conducted", "rodent_active": 0, "rodent_checked": 25, "snake_active": 0, "snake_checked": 0, "uv_active": 0, "uv_checked": 0, "active_stations": [], "actions": ["Conducted internal and external pest control treatment", "Inspected and monitored all rodent control stations", "Distributed fly bags as required", "Installed 50 rodent traps at designated locations", "Distributed rodent bait in external areas "]}], "findings": [{"date": "2026-09-08", "issue": "Open doors and windows were observed", "category": "Other", "pest": "General", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "Open doors and windows were observed."}, {"date": "2026-09-08", "issue": "Drainage openings unsealed", "category": "Proofing and openings", "pest": "General", "location": "Drains", "severity": "Moderate", "source": "Admin comment", "description": "Drain openings were found to be inadequately sealed."}, {"date": "2026-09-20", "issue": "Doors left open", "category": "Site practices", "pest": "General", "location": "Doors and entrances", "severity": "Moderate", "source": "Admin comment", "description": "Several doors were observed left open"}], "general": ["Informing workers not remove traps from the ground during the site cleaning process.", "Closing entry points that leads into the structure.", "Cleaning the Garbage areas frequently.", "it’s important to not move or change the place of rodent’s trap, they have been strategically distributed according to a specific plan to effectively address the issue of rodent control and these traps contain a poisonous bait.", "Doors and windows should be kept properly closed to prevent pest entry."]}, {"id": "C00829|2026-09-26", "file": "muhaj_baghdad call back Report September 2026.pdf", "client": "muhaj_baghdad", "client_code": "C00829", "city": "Hilla", "provider": "Buckler Pest Control", "period_from": "2026-09-26", "period_to": "2026-09-26", "equipment": {"rodent": 25, "snake": 0, "uv": 0}, "visits": [{"date": "2026-09-26", "time": "08:00", "type": "Call-back", "leader": "Mahdi Sailh", "status": "Conducted", "rodent_active": 0, "rodent_checked": 25, "snake_active": 0, "snake_checked": 0, "uv_active": 0, "uv_checked": 0, "active_stations": [], "actions": ["Internal and external spraying was carried out, and fly bags were inspected and monitored"]}], "findings": [{"date": "2026-09-26", "issue": "Fly activity", "category": "Client complaint", "pest": "Flies", "location": "Site-wide", "severity": "High", "source": "Client comment", "description": "Presence of flies was observed at the site."}, {"date": "2026-09-26", "issue": "Doors left open", "category": "Site practices", "pest": "General", "location": "Doors and entrances", "severity": "Moderate", "source": "Admin comment", "description": "Most doors and windows were observed left open."}, {"date": "2026-09-26", "issue": "Waste accumulation", "category": "Hygiene and waste", "pest": "General", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "Waste containers were found overflowing and uncovered."}, {"date": "2026-09-26", "issue": "Food debris was scattered on the", "category": "Other", "pest": "General", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "Food debris was scattered on the floor."}, {"date": "2026-09-26", "issue": "These elements collectively contribute to a", "category": "Other", "pest": "General", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "These elements collectively contribute to a severe fly infestation risk."}], "general": []}, {"id": "C00829|2026-09-29", "file": "muhaj_baghdad call back Report September 2026.pdf", "client": "muhaj_baghdad", "client_code": "C00829", "city": "Hilla", "provider": "Buckler Pest Control", "period_from": "2026-09-29", "period_to": "2026-09-29", "equipment": {"rodent": 25, "snake": 0, "uv": 0}, "visits": [{"date": "2026-09-29", "time": "11:00", "type": "Call-back", "leader": "Ali Mohammed", "status": "Conducted", "rodent_active": 0, "rodent_checked": 25, "snake_active": 0, "snake_checked": 0, "uv_active": 0, "uv_checked": 0, "active_stations": [], "actions": ["Internal and external spraying were carried out in the administration building and restaurant", "Cold fogging treatment was conducted in the restaurant dining hall", "Fly bags were inspected and monitored"]}], "findings": [{"date": "2026-09-29", "issue": "Fly activity", "category": "Client complaint", "pest": "Flies", "location": "Site-wide", "severity": "High", "source": "Client comment", "description": "Complaint: Flies have been reported in the kitchen, the administration building, and the engineers' accommodation."}, {"date": "2026-09-29", "issue": "Food residues were observed", "category": "Other", "pest": "General", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "Food residues were observed."}, {"date": "2026-09-29", "issue": "Open doors were found on site", "category": "Other", "pest": "General", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "Open doors were found on site."}, {"date": "2026-09-29", "issue": "Doors left open", "category": "Site practices", "pest": "General", "location": "Doors and entrances", "severity": "Moderate", "source": "Admin comment", "description": "Kitchen windows were observed to be left open."}, {"date": "2026-09-29", "issue": "Fly activity", "category": "Pest activity", "pest": "Flies", "location": "Site-wide", "severity": "Moderate", "source": "Admin comment", "description": "Waste bins are full and uncovered, which may contribute to increased fly activity."}], "general": []}];
+/* ---------- data model ---------- */
+let REPORTS=[], VISITS=[], FINDINGS=[], ISSUES=new Map(), USER_ADDED=false;
+function num(v){v=+v;return isFinite(v)?v:0}
+function cleanReport(r){
+  const vis=(r.visits||[]).map(v=>({date:v.date,time:v.time||'',type:v.type||'Regular',leader:v.leader||'',status:v.status||'Conducted',
+    rodent_active:num(v.rodent_active),rodent_checked:num(v.rodent_checked),snake_active:num(v.snake_active),snake_checked:num(v.snake_checked),uv_active:num(v.uv_active),uv_checked:num(v.uv_checked),
+    active_stations:(v.active_stations||[]).map(s=>typeof s==='object'?{no:String(s.no??s.station??'').trim(),comment:s.comment||'Activity recorded.'}:{no:String(s),comment:'Activity recorded.'}).filter(s=>s.no),
+    actions:(v.actions||[]).filter(Boolean)})).filter(v=>parseDate(v.date));
+  const eq=r.equipment||{};
+  return {id:r.id||((r.client_code||r.client||'Client')+'|'+(r.period_from||'')),file:r.file||'',client:r.client||r.client_code||'Client',client_code:r.client_code||'',city:r.city||'',provider:r.provider||'',
+    period_from:r.period_from||'',period_to:r.period_to||'',equipment:{rodent:num(eq.rodent)||Math.max(0,...vis.map(v=>v.rodent_checked)),snake:num(eq.snake),uv:num(eq.uv)},visits:vis,
+    findings:(r.findings||[]).filter(f=>f&&(f.issue||f.description)),general:(r.general||r.general_comments||[]).filter(Boolean)};
+}
+function build(){
+  VISITS=[];FINDINGS=[];ISSUES=new Map();
+  REPORTS.forEach(r=>{
+    r.visits.forEach(v=>{VISITS.push(Object.assign({},v,{rid:r.id,client:r.client,_d:parseDate(v.date),key:r.id+'|'+v.date}))});
+    const fallback=r.visits.length?r.visits[r.visits.length-1].date:r.period_to;
+    r.findings.forEach((f,i)=>{
+      const d=parseDate(f.date)||parseDate(fallback);if(!d)return;
+      const sev=SEV_RANK[String(f.severity||'').toLowerCase()];const sr=sev==null?1:sev;
+      FINDINGS.push({id:r.client_code+'-'+iso(d).slice(0,7)+'-'+String(i+1).padStart(2,'0'),rid:r.id,client:r.client,_d:d,date:iso(d),
+        issue:titleCase(f.issue||f.description).slice(0,70),category:CATS.includes(f.category)?f.category:(titleCase(f.category)||'Other'),pest:titleCase(f.pest)||'General',
+        location:titleCase(f.location)||'Not specified',severity:SEVS[sr],sevRank:sr,source:f.source||'',description:f.description||f.issue||'',action:f.action||''});
+    });
+    r.visits.forEach(v=>{
+      const d=parseDate(v.date);
+      if(v.rodent_active>0)FINDINGS.push({id:r.client_code+'-'+v.date+'-R',rid:r.id,client:r.client,_d:d,date:v.date,issue:'Rodent bait consumed at stations',category:'Pest activity',pest:'Rodent',location:'Bait stations',severity:v.rodent_active>=3?'High':'Moderate',sevRank:v.rodent_active>=3?2:1,source:'Station check',description:'Activity at '+plural(v.rodent_active,'rodent station')+(v.active_stations.length?': no. '+v.active_stations.map(s=>s.no).join(', '):'')+'.',action:'',stations:v.active_stations.map(s=>s.no)});
+      if(v.snake_active>0)FINDINGS.push({id:r.client_code+'-'+v.date+'-S',rid:r.id,client:r.client,_d:d,date:v.date,issue:'Snake bait station activity',category:'Pest activity',pest:'Snake',location:'Bait stations',severity:'High',sevRank:2,source:'Station check',description:'Activity at '+plural(v.snake_active,'snake station')+'.',action:''});
+      if(v.uv_active>0)FINDINGS.push({id:r.client_code+'-'+v.date+'-U',rid:r.id,client:r.client,_d:d,date:v.date,issue:'Flying insect activity on UV machines',category:'Pest activity',pest:'Flies',location:'UV fly machines',severity:'Moderate',sevRank:1,source:'Station check',description:'Activity on '+plural(v.uv_active,'UV machine')+'.',action:''});
+    });
+  });
+  VISITS.sort((a,b)=>a._d-b._d);FINDINGS.sort((a,b)=>a._d-b._d);
+  // issue status relative to each client's latest two visits
+  const byClient=new Map();VISITS.forEach(v=>{if(!byClient.has(v.client))byClient.set(v.client,[]);byClient.get(v.client).push(v.date)});
+  byClient.forEach((ds,c)=>byClient.set(c,[...new Set(ds)].sort()));
+  FINDINGS.forEach(f=>{
+    const k=f.client+'|'+f.issue.toLowerCase();
+    if(!ISSUES.has(k))ISSUES.set(k,{key:k,client:f.client,issue:f.issue,category:f.category,pest:f.pest,sevRank:0,dates:new Set(),locations:new Set(),items:[]});
+    const it=ISSUES.get(k);it.dates.add(f.date);it.locations.add(f.location);it.items.push(f);it.sevRank=Math.max(it.sevRank,f.sevRank);f.ikey=k;
+  });
+  ISSUES.forEach(it=>{
+    const ds=byClient.get(it.client)||[];const last=ds[ds.length-1],prev=ds[ds.length-2];const seen=[...it.dates].sort();
+    it.first=seen[0];it.last=seen[seen.length-1];it.count=seen.length;
+    it.status=it.last>=last?'Ongoing':(prev&&it.last>=prev)?'Watch':'Resolved';
+    it.severity=SEVS[it.sevRank];
+  });
+  const ov=overrides();ISSUES.forEach(it=>{it.auto=it.status;if(ov[it.key]){it.status=ov[it.key];it.manual=true}});
+  FINDINGS.forEach(f=>{f.status=ISSUES.get(f.ikey).status});
+}
+const OV_KEY='pest-dashboard-overrides-v1';
+function overrides(){if(MODE!=='local')return Object.assign({},window.__OVR||{});let o={};try{o=JSON.parse(localStorage.getItem(OV_KEY)||'null')||{}}catch(e){}return Object.assign({},window.__OVR||{},o)}
+function setOverride(k,v){const o=overrides();if(v)o[k]=v;else delete o[k];if(MODE!=='local'){window.__OVR=o;publishSelf();return}try{localStorage.setItem(OV_KEY,JSON.stringify(o))}catch(e){window.__OVR=o}}
+function loadReports(){
+  let saved=null;if(MODE==='local'){try{saved=JSON.parse(localStorage.getItem(LS_KEY)||'null')}catch(e){}}
+  USER_ADDED=!!(saved&&Array.isArray(saved)&&saved.length);
+  const map=new Map();(Array.isArray(window.__PRELOAD)?window.__PRELOAD:SEED).concat(USER_ADDED?saved:[]).map(cleanReport).forEach(r=>map.set(r.id,r));
+  REPORTS=[...map.values()].sort((a,b)=>(a.period_from||'').localeCompare(b.period_from||''));
+  build();
+}
+function saveUserReports(list){try{localStorage.setItem(LS_KEY,JSON.stringify(list));return true}catch(e){return false}}
+function userReports(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]')||[]}catch(e){return []}}
+
+/* ---------- state & filtering ---------- */
+const state={preset:'latest',from:null,to:null,client:'',category:'',pest:'',location:'',severity:'',status:'',q:'',sort:{k:'date',dir:-1},page:0,tab:'open',cmp:'category'};
+let downloads=null,sampleFn=null;
+function applyPreset(){
+  const ends=REPORTS.map(r=>parseDate(r.period_to)).concat(VISITS.map(v=>v._d)).filter(Boolean);
+  const end=ends.length?new Date(Math.max(...ends)):new Date();
+  if(state.preset==='custom')return;
+  state.to=end;
+  if(state.preset==='latest'){const rs=REPORTS.filter(r=>parseDate(r.period_to)&&+parseDate(r.period_to)===+end);const st=rs.map(r=>parseDate(r.period_from)).filter(Boolean);state.from=st.length?new Date(Math.min(...st)):new Date(end.getFullYear(),end.getMonth(),1)}
+  else if(state.preset==='all'){const st=VISITS.map(v=>v._d).concat(REPORTS.map(r=>parseDate(r.period_from)).filter(Boolean));state.from=st.length?new Date(Math.min(...st)):addMonths(end,-1)}
+  else state.from=addDays(addMonths(end,state.preset==='3m'?-3:-6),1);
+}
+function range(){const len=diff(state.from,state.to)+1,pTo=addDays(state.from,-1);return {len,pFrom:addDays(pTo,-(len-1)),pTo}}
+function fMatch(f,ignore){
+  for(const k of FKEYS){if(ignore&&ignore.includes(k))continue;if(state[k]&&f[k]!==state[k])return false}
+  if(state.q){const q=state.q.toLowerCase();if(!(f.issue+' '+f.description+' '+f.location+' '+f.pest+' '+f.id+' '+(f.stations||[]).join(' ')).toLowerCase().includes(q))return false}
+  return true;
+}
+function findings(from,to,ignore){return FINDINGS.filter(f=>f._d>=from&&f._d<=to&&fMatch(f,ignore))}
+function visits(from,to){return VISITS.filter(v=>v._d>=from&&v._d<=to&&(!state.client||v.client===state.client))}
+function issuesOf(list){const m=new Map();list.forEach(f=>{const it=ISSUES.get(f.ikey);if(!m.has(f.ikey))m.set(f.ikey,{it,n:0,dates:new Set()});const e=m.get(f.ikey);e.n++;e.dates.add(f.date)});return [...m.values()]}
+function uniqVals(k){
+  let a=[...new Set((k==='client'?VISITS.map(v=>v.client).concat(FINDINGS.map(f=>f.client)):FINDINGS.map(f=>f[k])))];
+  if(k==='severity')a=SEVS.filter(s=>a.includes(s));else if(k==='status')a=['Ongoing','Watch','Resolved'].filter(s=>a.includes(s));else if(k==='category')a.sort((x,y)=>(CATS.indexOf(x)+99)%99-(CATS.indexOf(y)+99)%99);else a.sort();
+  return a;
+}
+function buildSelects(){$$('select[data-key]').forEach(sel=>{const k=sel.dataset.key;sel.innerHTML='<option value="">All</option>'+uniqVals(k).map(v=>'<option value="'+esc(v)+'">'+esc(k==='status'?(STL[v]||v):v)+'</option>').join('');sel.value=state[k]||''})}
+function syncControls(){
+  $('#fPreset').value=state.preset;$('#fFrom').value=iso(state.from);$('#fTo').value=iso(state.to);
+  $$('select[data-key]').forEach(sel=>{sel.value=state[sel.dataset.key]||''});$('#q').value=state.q;
+  const chips=FKEYS.filter(k=>state[k]&&!(window.__LOCK&&k==='client')).map(k=>'<button class="chip" data-clear="'+k+'">'+FLABEL[k]+': <span>'+esc(k==='status'?(STL[state[k]]||state[k]):state[k])+'</span><i aria-hidden="true">×</i></button>');
+  if(state.q)chips.push('<button class="chip" data-clear="q">Search: <span>'+esc(state.q)+'</span><i aria-hidden="true">×</i></button>');
+  $('#chips').innerHTML=chips.join('');
+}
+function setFilter(k,v,toggle){state[k]=toggle&&state[k]===v?'':v;state.page=0;render()}
+const STL={Ongoing:'Still open',Watch:'Improving',Resolved:'Cleared'};
+function statusPill(s){return '<span class="st st-'+s+'">'+(STL[s]||s)+'</span>'}
+
+/* ---------- metrics ---------- */
+function metrics(fl,vl){
+  const iss=issuesOf(fl);
+  const r=vl.reduce((a,v)=>{a.ra+=v.rodent_active;a.rc+=v.rodent_checked;a.sa+=v.snake_active;a.ua+=v.uv_active;v.active_stations.forEach(s=>a.st.set(s.no,(a.st.get(s.no)||0)+1));return a},{ra:0,rc:0,sa:0,ua:0,st:new Map()});
+  return {visits:vl.length,findings:fl.length,issues:iss.length,ongoing:iss.filter(e=>e.it.status==='Ongoing').length,watch:iss.filter(e=>e.it.status==='Watch').length,resolved:iss.filter(e=>e.it.status==='Resolved').length,recurring:iss.filter(e=>e.dates.size>=2).length,high:fl.filter(f=>f.sevRank>=2).length,ra:r.ra,rc:r.rc,rate:r.rc?r.ra/r.rc*100:null,sa:r.sa,ua:r.ua,stations:r.st,repeatSt:[...r.st.entries()].filter(e=>e[1]>=2).map(e=>e[0])};
+}
+function deltaHTML(cur,prev,lowerBetter,has){
+  if(!has)return '<span class="flat">No earlier report to compare</span>';
+  const p=pctChange(cur,prev);if(p==null)return '<span class="flat">None in previous period</span>';
+  const dir=Math.abs(p)<1?0:Math.sign(p);if(!dir)return '<span class="flat">No change vs previous</span>';
+  const good=lowerBetter?dir<0:dir>0;return '<span class="'+(dir>0?'up':'down')+'-'+(good?'good':'bad')+'">'+(dir>0?'▲ ':'▼ ')+Math.abs(p).toFixed(0)+'% vs previous</span>';
+}
+function kpi(v,l,d,act){return '<div class="kpi">'+(act?'<button data-kpi="'+act+'">':'<div>')+'<div class="v">'+v+'</div><div class="l">'+l+'</div><div class="d">'+d+'</div>'+(act?'</button>':'</div>')+'</div>'}
+
+/* ---------- render ---------- */
+function render(){
+  syncControls();
+  const {len,pFrom,pTo}=range();
+  const fl=findings(state.from,state.to),vl=visits(state.from,state.to);
+  const pfl=findings(pFrom,pTo),pvl=visits(pFrom,pTo);
+  const m=metrics(fl,vl),pm=metrics(pfl,pvl),has=pvl.length>0;
+  const clients=[...new Set(vl.map(v=>v.client))];
+  $('#subtitle').textContent=(clients.length===1?clients[0]+', ':clients.length?plural(clients.length,'client')+', ':'')+fmtDY(state.from)+' to '+fmtDY(state.to);
+  $('#srcLabel').textContent=MODE==='viewer'?'Client report, view only':plural(REPORTS.length,'report')+' loaded'+(MODE==='viewer'?', view only':MODE==='owner'?', changes save to the shared link':'');
+  $('#cmpNote').textContent=has?fmtD(pFrom)+' to '+fmtD(pTo)+' against '+fmtD(state.from)+' to '+fmtD(state.to)+'.':'Upload the previous month’s report for this client to compare.';
+  $('#reportList').innerHTML=REPORTS.map(r=>'<div class="hint" style="color:var(--ink);font-size:13px">'+esc(r.client)+'<br><span class="muted">'+(r.period_from?fmtDY(parseDate(r.period_from)):'')+(r.period_to?' to '+fmtDY(parseDate(r.period_to)):'')+', '+plural(r.visits.length,'visit')+'</span></div>').join('');
+  renderBriefing(fl,vl,m,pm,has);
+  $('#kpis').innerHTML=[
+    kpi(m.visits,'Service visits',vl.length?'<span class="flat">'+[...count(vl,v=>v.type).entries()].map(e=>e[1]+' '+e[0].toLowerCase()).join(', ')+'</span>':'<span class="flat">None in range</span>','visits'),
+    kpi(m.findings,'Findings logged',deltaHTML(m.findings,pm.findings,true,has)),
+    kpi(m.ongoing,'Still open',m.watch?'<span class="up-bad">plus '+m.watch+' improving</span>':'<span class="flat">Reported at the latest visit</span>','open'),
+    kpi(m.resolved,'Cleared','<span class="flat">Not reported at the last two visits</span>','resolved'),
+    kpi(m.ra,'Rodent station hits',m.rate==null?'<span class="flat">No station checks</span>':'<span class="flat">'+m.rate.toFixed(2)+'% of checks, '+plural(m.stations.size,'station')+'</span>','stations'),
+    kpi(m.recurring,'Recurring problems',m.repeatSt.length?'<span class="up-bad">Station'+(m.repeatSt.length>1?'s ':' ')+m.repeatSt.join(', ')+' active more than once</span>':'<span class="flat">Reported at two or more visits</span>','matrix')
+  ].join('');
+  renderMatrix(fl,vl);renderTrend(fl,vl);renderCats();renderStations(vl);renderLocs();renderIssues(fl);renderRecs(fl,vl,m);renderCmp(fl,pfl,has);renderVisits(vl);renderTable(fl);
+  $('#refreshed').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+function renderBriefing(fl,vl,m,pm,has){
+  if(!vl.length&&!fl.length){$('#briefing').innerHTML='<p>No visits or findings in this period. Choose another period, clear a filter, or upload more reports.</p>';return}
+  const iss=issuesOf(fl).sort((a,b)=>b.dates.size-a.dates.size||b.it.sevRank-a.it.sevRank);
+  const top=iss.filter(e=>e.it.status==='Ongoing'&&e.dates.size>=2).slice(0,3).map(e=>e.it.issue.toLowerCase()+' ('+e.dates.size+' of '+vl.length+' visits)');
+  const high=iss.filter(e=>e.it.sevRank>=2);
+  const s=[];
+  s.push('<b>'+plural(m.visits,'visit')+'</b> produced <b>'+plural(m.findings,'finding')+'</b> covering '+plural(m.issues,'distinct problem')+(has?', '+(m.findings>=pm.findings?'up':'down')+' from '+pm.findings+' findings in the previous period':'')+'.');
+  s.push('<b>'+m.ongoing+'</b> '+(m.ongoing===1?'is':'are')+' still being reported at the latest visit, and '+m.resolved+' '+(m.resolved===1?'has':'have')+' not been reported for two visits.');
+  if(top.length)s.push('The most persistent are '+top.join(', ')+'.');
+  if(m.ra)s.push('Rodents took bait <b>'+plural(m.ra,'time')+'</b> across '+plural(m.stations.size,'station')+(m.repeatSt.length?', with station '+m.repeatSt.join(', ')+' active more than once':'')+'.');
+  if(high.length)s.push('High-severity items: '+high.map(e=>e.it.issue.toLowerCase()).join(', ')+'.');
+  $('#briefing').innerHTML='<p>'+s.join(' ')+'</p>';
+}
+
+function renderMatrix(fl,vl){
+  const iss=issuesOf(fl).sort((a,b)=>(a.it.status==='Resolved')-(b.it.status==='Resolved')||b.dates.size-a.dates.size||b.it.sevRank-a.it.sevRank);
+  if(!iss.length){$('#matrix').innerHTML='<div class="empty">No problems in this view.</div>';return}
+  const multi=new Set(vl.map(v=>v.client)).size>1;
+  const cols=vl.slice();
+  let h='<table class="heat mx"><thead><tr><th style="text-align:left">Problem</th>'+cols.map(v=>'<th scope="col"><button class="colbtn" data-visit="'+esc(v.key)+'" title="'+esc(v.type+' visit, '+v.client)+'">'+fmtD(v._d)+'<br><span class="muted">'+esc(v.type)+'</span></button></th>').join('')+'<th>Visits</th><th>Status</th></tr></thead><tbody>';
+  iss.forEach(e=>{
+    const it=e.it;
+    h+='<tr class="mxrow" data-issue="'+esc(it.key)+'" tabindex="0"><th scope="row"><span class="pill"><i class="sw" style="background:'+sevColor(it.sevRank)+'"></i>'+esc(it.issue)+'</span>'+(multi?'<br><span class="muted small">'+esc(it.client)+'</span>':'')+'</th>';
+    cols.forEach(v=>{const on=v.client===it.client&&e.dates.has(v.date);const f=on?it.items.find(x=>x.date===v.date):null;h+='<td><span class="mxc'+(on?' on':'')+'" style="'+(on?'background:'+sevColor(f?f.sevRank:it.sevRank):'')+'" title="'+(on?esc(f?f.description:it.issue):'Not reported')+'"></span></td>'});
+    h+='<td class="tot">'+e.dates.size+'</td><td>'+statusPill(it.status)+'</td></tr>';
+  });
+  $('#matrix').innerHTML=h+'</tbody></table>';
+}
+
+function niceScale(max){max=Math.max(max,4);const raw=max/4,mag=Math.pow(10,Math.floor(Math.log10(raw)));for(const f of [1,2,2.5,5,10])if(f*mag>=raw)return {step:f*mag,max:f*mag*4};return {step:raw,max}}
+function renderTrend(fl,vl){
+  if(!vl.length){$('#trend').innerHTML='<div class="empty">No visits in this period.</div>';return}
+  const fc=count(fl,f=>f.client+'|'+f.date);
+  const data=vl.map(v=>({v,r:v.rodent_active,s:v.snake_active,u:v.uv_active,f:fc.get(v.client+'|'+v.date)||0}));
+  const W=760,H=250,L=34,R=34,T=14,B=34;
+  const sc=niceScale(Math.max(...data.map(d=>d.r+d.s+d.u),1));const sf=niceScale(Math.max(...data.map(d=>d.f),1));
+  const y=v=>T+(H-T-B)*(1-v/sc.max),yf=v=>T+(H-T-B)*(1-v/sf.max);
+  const bw=(W-L-R)/data.length;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Bait station activity and findings per visit">';
+  for(let v=0;v<=sc.max+1e-9;v+=sc.step)s+='<line class="g-line" x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text x="'+(L-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+Math.round(v)+'</text>';
+  for(let v=0;v<=sf.max+1e-9;v+=sf.step)s+='<text x="'+(W-R+6)+'" y="'+(yf(v)+4)+'" style="fill:var(--accent)">'+Math.round(v)+'</text>';
+  const every=Math.ceil(data.length/10);
+  data.forEach((d,i)=>{
+    const x=L+i*bw+bw*.25,w=Math.max(3,Math.min(46,bw*.5));let base=0;
+    const lbl=fmtD(d.v._d)+' '+d.v.type+': '+d.r+' rodent, '+d.s+' snake, '+d.u+' UV with activity; '+d.f+' findings';
+    s+='<g class="t-bar-g" tabindex="0" role="button" data-visit="'+esc(d.v.key)+'" aria-label="'+esc(lbl)+'"><title>'+esc(lbl)+'</title><rect x="'+(L+i*bw)+'" y="'+T+'" width="'+bw+'" height="'+(H-T-B)+'" fill="transparent" style="cursor:pointer"/>';
+    [[d.r,'var(--s3)'],[d.s,'var(--s4)'],[d.u,'var(--s2)']].forEach(([n,c])=>{if(n){s+='<rect x="'+x+'" y="'+y(base+n)+'" width="'+w+'" height="'+(y(base)-y(base+n))+'" style="fill:'+c+'" pointer-events="none"/>';base+=n}});
+    if(!base)s+='<rect x="'+x+'" y="'+(y(0)-1.5)+'" width="'+w+'" height="1.5" style="fill:var(--line)" pointer-events="none"/>';
+    s+='</g>';
+    if(i%every===0)s+='<text x="'+(L+i*bw+bw/2)+'" y="'+(H-12)+'" text-anchor="middle">'+fmtD(d.v._d)+'</text>';
+  });
+  s+='<polyline points="'+data.map((d,i)=>(L+i*bw+bw/2)+','+yf(d.f)).join(' ')+'" style="fill:none;stroke:var(--accent);stroke-width:2.5" pointer-events="none"/>';
+  data.forEach((d,i)=>{s+='<circle cx="'+(L+i*bw+bw/2)+'" cy="'+yf(d.f)+'" r="4" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5" pointer-events="none"/>'});
+  $('#trend').innerHTML=s+'</svg>';
+}
+function barRows(list,key,selKey){
+  const {pFrom,pTo}=range();
+  const groups=new Map();list.forEach(f=>{if(!groups.has(f[key]))groups.set(f[key],[0,0,0]);groups.get(f[key])[f.sevRank]++});
+  const rows=[...groups.entries()].map(([k,v])=>({k,v,n:v[0]+v[1]+v[2]})).sort((a,b)=>b.n-a.n);
+  if(!rows.length)return '<div class="empty">No findings in this view.</div>';
+  const max=rows[0].n;
+  return rows.map(r=>'<button class="cat'+(state[selKey]===r.k?' sel':'')+'" data-f="'+selKey+'" data-v="'+esc(r.k)+'" aria-pressed="'+(state[selKey]===r.k)+'"><span class="nm" title="'+esc(r.k)+'">'+esc(r.k)+'</span><span class="stack" style="width:'+(r.n/max*100)+'%">'+r.v.map((c,i)=>c?'<i class="s'+(i+1)+'" style="width:'+(c/r.n*100)+'%"></i>':'').join('')+'</span><span class="n">'+r.n+'</span><span class="dl"></span></button>').join('');
+}
+function renderCats(){$('#cats').innerHTML=barRows(findings(state.from,state.to,['category']),'category','category')}
+function renderLocs(){$('#locs').innerHTML=barRows(findings(state.from,state.to,['location']),'location','location')}
+
+function renderStations(vl){
+  const total=Math.max(0,...REPORTS.filter(r=>!state.client||r.client===state.client).map(r=>r.equipment.rodent||0));
+  const hits=new Map();vl.forEach(v=>v.active_stations.forEach(s=>{if(!hits.has(s.no))hits.set(s.no,[]);hits.get(s.no).push(v)}));
+  const numeric=[...hits.keys()].every(k=>/^\d+$/.test(k));
+  const n=numeric?Math.max(total,...[...hits.keys()].map(Number),0):0;
+  let h='';
+  if(n&&n<=1500){
+    const max=Math.max(1,...[...hits.values()].map(a=>a.length));
+    h='<div class="stations" role="list">';
+    for(let i=1;i<=n;i++){const a=hits.get(String(i));const c=a?a.length:0;h+='<button class="stn'+(c?' on':'')+'" role="listitem" '+(c?'data-station="'+i+'"':'tabindex="-1"')+' style="'+(c?'background:color-mix(in srgb,var(--s3) '+Math.round(45+55*c/max)+'%,var(--panel-2))':'')+'" title="Station '+i+(c?': activity at '+plural(c,'visit'):': no activity')+'">'+(c?i:'')+'</button>'}
+    h+='</div>';
+    $('#stnNote').textContent=n+' rodent stations. Highlighted squares had bait consumed in this period; darker means more visits. Click one for its history.';
+  }else if(!hits.size){h='';$('#stnNote').textContent='No station data in this period.'}
+  $('#stations').innerHTML=h;
+  const top=[...hits.entries()].sort((a,b)=>b[1].length-a[1].length);
+  $('#stnTop').innerHTML=top.length?'<table class="data"><thead><tr><th>Station</th><th class="num">Visits with activity</th><th>Dates</th></tr></thead><tbody>'+top.slice(0,8).map(([no,a])=>'<tr class="click" data-station="'+esc(no)+'"><td><b>'+esc(no)+'</b>'+(a.length>1?' <span class="st st-Ongoing">repeat</span>':'')+'</td><td class="num">'+a.length+'</td><td>'+a.map(v=>fmtD(v._d)).join(', ')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No bait was consumed at any station in this period.</div>';
+}
+
+function issueRow(e){
+  const it=e.it;
+  return '<button class="issue" data-issue="'+esc(it.key)+'"><div><div class="a">'+esc(it.issue)+'</div><div class="b">'+esc([...it.locations].join(', '))+', last reported '+fmtD(parseDate(e.dates&&e.dates.size?[...e.dates].sort().pop():it.last))+'</div></div><div class="c"><div class="pill"><i class="sw" style="background:'+sevColor(it.sevRank)+'"></i>'+it.severity+'</div><div class="muted">'+plural(e.dates?e.dates.size:it.count,'visit')+'</div></div></button>';
+}
+function renderIssues(fl){
+  const iss=issuesOf(fl);const sorter=(a,b)=>b.it.sevRank-a.it.sevRank||b.it.count-a.it.count;
+  const open=iss.filter(e=>e.it.status!=='Resolved').sort(sorter),res=iss.filter(e=>e.it.status==='Resolved').sort(sorter);
+  $('#tabOpen').setAttribute('aria-selected',state.tab==='open');$('#tabResolved').setAttribute('aria-selected',state.tab==='resolved');
+  $('#tabOpen').textContent='Open & improving ('+open.length+')';$('#tabResolved').textContent='Cleared ('+res.length+')';
+  const list=state.tab==='open'?open:res;
+  $('#issues').innerHTML=list.length?list.map(e=>issueRow(e).replace('<div class="muted">','<div>'+statusPill(e.it.status)+'</div><div class="muted">')).join(''):'<div class="empty">'+(state.tab==='open'?'Nothing unresolved in this view.':'Nothing resolved yet. A problem counts as resolved once it isn’t reported for two visits in a row.')+'</div>';
+}
+
+const ADVICE=[
+ [/dead rat|electrical panel|substation/,'Have an electrician and the technician open the panel together, remove the carcasses, and seal every cable entry into the panel.'],
+ [/cockroach/,'Book a follow-up inspection in the affected area to confirm the treatment worked, and fix the moisture and gaps that let cockroaches settle.'],
+ [/door.*open|open.*door/,'Fit self-closing hinges or strip curtains on the doors that are left open, and add a daily closing check by the site supervisor.'],
+ [/gap.*door|door.*gap|under door|beneath/,'Install door sweeps or brush strips on every door with a bottom gap; list the doors so the technician can confirm them at the next visit.'],
+ [/caravan/,'Seal the gaps and openings in the caravans with sealant and mesh, starting with the rooms where cockroaches were reported.'],
+ [/wall|opening|drain|seal/,'Seal wall and pipe openings with mesh and sealant, and fit covers on drainage openings.'],
+ [/fly trap|uv|switched off|turned off/,'Wire UV fly machines to a supply staff can’t switch off, or label them "Keep on 24h", and check them each shift.'],
+ [/inaccessible|access/,'Clear stored goods from around the listed traps and keep a clear margin so every trap can be serviced.'],
+ [/waste|garbage|rubbish/,'Increase waste collection and use closed bins; clear the accumulated waste before the next visit.'],
+ [/unavailable|not be treated|could not/,'Agree access to the untreated rooms with the accommodation manager before the next visit, and treat them as a follow-up.'],
+ [/scorpion/,'Clear debris and vegetation along building walls, seal ground-level gaps, and keep glue traps along the perimeter.'],
+ [/bait consumed|rodent|mouse|rat/,'Inspect around the active stations for burrows and entry points, and increase checks at stations that are active more than once.']
+];
+function adviceFor(it){const a=ADVICE.find(([re])=>re.test(it.issue.toLowerCase()))||ADVICE.find(([re])=>re.test((it.issue+' '+[...it.locations].join(' ')).toLowerCase()));return a?a[1]:'Find the root cause with the site team and agree a fix with an owner and a date.'}
+let RECS=[];
+function renderRecs(fl,vl,m){
+  const iss=issuesOf(fl);
+  const score=e=>(e.it.status==='Ongoing'?100:e.it.status==='Watch'?50:0)+e.dates.size*10+e.it.sevRank*40;
+  RECS=iss.filter(e=>e.it.status!=='Resolved'||e.it.sevRank>=2).sort((a,b)=>score(b)-score(a)).slice(0,8).map(e=>{
+    const it=e.it;let p,label;
+    if(it.status==='Ongoing'&&(e.dates.size>=2||it.sevRank>=2)){p=0;label='Immediate'}else if(it.status==='Resolved'){p=2;label='Verify closed'}else{p=1;label=it.status==='Watch'?'Monitor':'This month'}
+    let text=adviceFor(it);
+    if(/bait consumed/i.test(it.issue)&&m.repeatSt.length)text='Station '+m.repeatSt.join(', ')+' had bait consumed at more than one visit. '+text;
+    return {p,label,title:it.issue+(e.dates.size>=2?', reported at '+e.dates.size+' visits':''),text,key:it.key};
+  });
+  $('#recs').innerHTML=RECS.length?RECS.map((r,i)=>'<div class="rec"><div class="prio p'+r.p+'">'+r.label+'</div><div><h3>'+esc(r.title)+'</h3><p>'+esc(r.text)+'</p></div><button class="btn" data-issue="'+esc(r.key)+'">Details</button></div>').join(''):'<div class="empty">No open problems in this view.</div>';
+  const gen=[...new Set(REPORTS.filter(r=>(!state.client||r.client===state.client)&&vl.some(v=>v.rid===r.id)).flatMap(r=>r.general))];
+  $('#general').innerHTML=gen.length?'<h3 style="margin-top:16px">What the provider asked the site to do</h3><ol class="small" style="padding-left:20px;margin:8px 0 0;color:var(--muted)">'+gen.map(g=>'<li style="margin:3px 0">'+esc(g)+'</li>').join('')+'</ol>':'';
+}
+function renderCmp(fl,pfl,has){
+  $$('[data-cmp]').forEach(b=>b.setAttribute('aria-selected',b.dataset.cmp===state.cmp));
+  {const cp=$('#cmp').closest('.panel'),row=cp.parentElement;cp.hidden=!has;row.classList.toggle('solo',!has)}
+  if(!has){$('#cmp').innerHTML='<div class="empty">Only one period of reports is loaded. Upload last month’s report for the same client and this table will show what improved and what got worse.</div>';return}
+  const k=state.cmp,c=count(fl,f=>f[k]),p=count(pfl,f=>f[k]);
+  const keys=[...new Set([...c.keys(),...p.keys()])].sort((a,b)=>(c.get(b)||0)-(c.get(a)||0));
+  $('#cmp').innerHTML='<table class="data"><thead><tr><th>'+(k==='category'?'Issue type':'Problem')+'</th><th class="num">Previous</th><th class="num">This period</th><th class="num">Change</th><th>Verdict</th></tr></thead><tbody>'+keys.map(key=>{const a=c.get(key)||0,b=p.get(key)||0,d=a-b;const v=d===0?'<span class="flat">Same</span>':!b?'<span class="up-bad">New</span>':!a?'<span class="down-good">Gone</span>':d>0?'<span class="up-bad">Worse</span>':'<span class="down-good">Better</span>';return '<tr><td>'+esc(key)+'</td><td class="num">'+b+'</td><td class="num">'+a+'</td><td class="num">'+(d>0?'+':'')+d+'</td><td>'+v+'</td></tr>'}).join('')+'</tbody></table>';
+}
+function renderVisits(vl){
+  $('#visits').innerHTML=vl.length?'<table class="data"><thead><tr><th>Date</th><th>Type</th><th>Team leader</th><th class="num">Rodent</th><th class="num">Snake</th><th class="num">UV</th><th>Status</th></tr></thead><tbody>'+vl.map(v=>'<tr class="click" data-visit="'+esc(v.key)+'"><td style="white-space:nowrap">'+fmtDY(v._d)+(v.time?' <span class="muted">'+esc(v.time)+'</span>':'')+'</td><td>'+esc(v.type)+'</td><td>'+esc(v.leader)+'</td><td class="num">'+v.rodent_active+' / '+v.rodent_checked+'</td><td class="num">'+v.snake_active+' / '+v.snake_checked+'</td><td class="num">'+v.uv_active+' / '+v.uv_checked+'</td><td>'+esc(v.status)+'</td></tr>').join('')+'</tbody></table><p class="small muted">Station columns show stations with activity out of stations checked.</p>':'<div class="empty">No visits in this period.</div>';
+}
+const COLS=[['date','Date'],['issue','Problem'],['category','Type'],['pest','Pest'],['location','Location'],['severity','Severity'],['status','Status'],['source','Reported by']];
+const PAGE=15;
+function renderTable(fl){
+  const {k,dir}=state.sort;const val=x=>k==='date'?x._d.getTime():k==='severity'?x.sevRank:String(x[k]||'').toLowerCase();
+  const list=fl.slice().sort((a,b)=>{const A=val(a),B=val(b);return (A<B?-1:A>B?1:0)*dir});
+  const pages=Math.max(1,Math.ceil(list.length/PAGE));state.page=Math.min(state.page,pages-1);
+  $('#tblNote').textContent=plural(list.length,'finding')+' match the current filters. Click a row for the problem’s full history.';
+  if(!list.length){$('#table').innerHTML='<div class="empty">No findings match. Clear a filter or widen the period.</div>';$('#pager').innerHTML='';return}
+  $('#table').innerHTML='<table class="data"><thead><tr>'+COLS.map(([c,l])=>'<th class="sortable" data-sort="'+c+'" tabindex="0" aria-sort="'+(k===c?(dir>0?'ascending':'descending'):'none')+'">'+l+(k===c?(dir>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr></thead><tbody>'+
+   list.slice(state.page*PAGE,state.page*PAGE+PAGE).map(x=>'<tr class="click" data-issue="'+esc(x.ikey)+'" tabindex="0"><td style="white-space:nowrap">'+fmtDY(x._d)+'</td><td><b>'+esc(x.issue)+'</b><br><span class="muted small">'+esc(x.description)+'</span></td><td>'+esc(x.category)+'</td><td>'+esc(x.pest)+'</td><td>'+esc(x.location)+'</td><td><span class="pill"><i class="sw" style="background:'+sevColor(x.sevRank)+'"></i>'+x.severity+'</span></td><td>'+statusPill(x.status)+'</td><td>'+esc(x.source)+'</td></tr>').join('')+'</tbody></table>';
+  $('#pager').innerHTML='<span>Showing '+(state.page*PAGE+1)+' to '+Math.min(list.length,(state.page+1)*PAGE)+' of '+list.length+'</span><span style="display:flex;gap:6px"><button class="btn" data-page="-1" '+(state.page?'':'disabled')+'>Previous</button><button class="btn" data-page="1" '+(state.page<pages-1?'':'disabled')+'>Next</button></span>';
+}
+
+/* ---------- drill-down ---------- */
+let lastFocus=null;
+function openDrawer(sub,title,body){lastFocus=document.activeElement;$('#dSub').textContent=sub;$('#dTitle').textContent=title;$('#dBody').innerHTML=body;$('#dBody').scrollTop=0;$('#drawer').classList.add('open');$('#scrim').classList.add('open');$('#drawer').setAttribute('aria-hidden','false');$('#dClose').focus()}
+function closeDrawer(){if(!$('#drawer').classList.contains('open'))return;$('#drawer').classList.remove('open');$('#scrim').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function openIssue(key){
+  const it=ISSUES.get(key);if(!it)return;
+  const cv=VISITS.filter(v=>v.client===it.client);
+  let h='<dl class="dl-grid"><dt>Status</dt><dd>'+statusPill(it.status)+'</dd><dt>Severity</dt><dd><span class="pill"><i class="sw" style="background:'+sevColor(it.sevRank)+'"></i>'+it.severity+'</span></dd><dt>Type</dt><dd>'+esc(it.category)+'</dd><dt>Pest</dt><dd>'+esc(it.pest)+'</dd><dt>Location</dt><dd>'+esc([...it.locations].join(', '))+'</dd><dt>Client</dt><dd>'+esc(it.client)+'</dd><dt>Reported</dt><dd>'+plural(it.count,'visit')+' of '+cv.length+', first '+fmtDY(parseDate(it.first))+', last '+fmtDY(parseDate(it.last))+'</dd></dl>';
+  if(MODE!=='viewer')h+='<div class="callout"><b>Change status.</b> '+(it.manual?'Set by hand (automatic: '+it.auto+'). ':'Worked out from the visits. ')+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+['Ongoing','Watch','Resolved'].map(s=>'<button class="btn'+(it.status===s?' primary':'')+'" data-ovr="'+esc(it.key)+'" data-ovs="'+s+'">'+({Ongoing:'Still open',Watch:'Improving',Resolved:'Resolved'}[s])+'</button>').join('')+(it.manual?'<button class="btn link" data-ovr="'+esc(it.key)+'" data-ovs="">Use automatic</button>':'')+'</div></div>';
+  h+='<div class="callout"><b>Next step.</b> '+esc(adviceFor(it))+'</div>';
+  h+='<h3>Visit by visit</h3><ul class="timeline">'+cv.map(v=>{const f=it.items.find(x=>x.date===v.date);return '<li class="'+(f?'':'pending')+'"><b>'+fmtDY(v._d)+'</b> <span class="muted">'+esc(v.type)+'</span><br>'+(f?esc(f.description)+(f.source?' <span class="muted">('+esc(f.source)+')</span>':'')+(f.action?'<br><span class="muted">Action: '+esc(f.action)+'</span>':''):'<span class="muted">Not reported</span>')+'</li>'}).join('')+'</ul>';
+  h+='<button class="btn" data-issuefilter="'+esc(key)+'">Show only this problem in the table</button>';
+  openDrawer(it.client,it.issue,h);
+}
+function openVisit(key){
+  const v=VISITS.find(x=>x.key===key);if(!v)return;
+  const fs=FINDINGS.filter(f=>f.client===v.client&&f.date===v.date);
+  let h='<dl class="dl-grid"><dt>Type</dt><dd>'+esc(v.type)+'</dd>'+(v.time?'<dt>Time</dt><dd>'+esc(v.time)+'</dd>':'')+'<dt>Team leader</dt><dd>'+esc(v.leader||'Not stated')+'</dd><dt>Status</dt><dd>'+esc(v.status)+'</dd><dt>Rodent stations</dt><dd>'+v.rodent_active+' active of '+v.rodent_checked+' checked'+(v.active_stations.length?' (no. '+v.active_stations.map(s=>esc(s.no)).join(', ')+')':'')+'</dd><dt>Snake stations</dt><dd>'+v.snake_active+' of '+v.snake_checked+'</dd><dt>UV fly machines</dt><dd>'+v.uv_active+' of '+v.uv_checked+'</dd></dl>';
+  if(v.actions.length)h+='<h3>Work carried out</h3><ul class="small" style="padding-left:18px;margin:8px 0 16px">'+v.actions.map(a=>'<li style="margin:3px 0">'+esc(a)+'</li>').join('')+'</ul>';
+  h+='<h3>Problems reported</h3>'+(fs.length?fs.map(f=>{const it=ISSUES.get(f.ikey);return '<button class="issue" data-issue="'+esc(f.ikey)+'"><div><div class="a">'+esc(f.issue)+'</div><div class="b">'+esc(f.description)+'</div></div><div class="c">'+statusPill(it.status)+'<div class="muted">'+plural(it.count,'visit')+'</div></div></button>'}).join(''):'<div class="empty">No problems reported at this visit.</div>');
+  openDrawer(v.client,fmtDY(v._d)+' visit',h);
+}
+function openStation(no){
+  const vs=VISITS.filter(v=>(!state.client||v.client===state.client)&&v.active_stations.some(s=>s.no===String(no)));
+  let h='<div class="callout">'+(vs.length>1?'<b>Repeat activity.</b> Bait was consumed here at '+vs.length+' visits. Check the surroundings for burrows, food sources and entry points, and consider adding stations nearby.':vs.length?'Bait was consumed here at one visit.':'No activity recorded at this station.')+'</div>';
+  h+='<ul class="timeline">'+vs.map(v=>'<li><b>'+fmtDY(v._d)+'</b> <span class="muted">'+esc(v.type)+', '+esc(v.client)+'</span><br>'+esc(v.active_stations.find(s=>s.no===String(no)).comment)+'</li>').join('')+'</ul>';
+  const near=[...new Set(VISITS.flatMap(v=>v.active_stations.map(s=>s.no)))].filter(s=>/^\d+$/.test(s)&&s!==String(no)&&Math.abs(+s-+no)<=3);
+  if(near.length)h+='<p class="small muted">Nearby stations with activity: '+near.join(', ')+'. Neighbouring hits often point to one source.</p>';
+  openDrawer('Rodent bait station','Station '+no,h);
+}
+
+/* ---------- export ---------- */
+function stamp(){return iso(state.from)+'_to_'+iso(state.to)}
+function blobSave(filename,data){const b=data instanceof Blob?data:new Blob([data]);const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000);toast('Saved '+filename)}
+async function save(filename,data){
+  if(!downloads){if(!window.claude){blobSave(filename,data);return}toast('Downloads aren’t available in this view.');return}
+  try{await downloads.save({filename,data});toast('Saved '+filename)}catch(e){const c=e&&e.code;if(c==='declined')return;toast(c==='rate_limited'?'A save prompt is already open.':'Couldn’t save the file.')}
+}
+
+/* ---------- PDF report (jsPDF) ---------- */
+const JSPDF_URL='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+let jspdfP=null;
+function ensureJsPDF(){if(window.jspdf&&window.jspdf.jsPDF)return Promise.resolve(window.jspdf);if(!jspdfP)jspdfP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src=JSPDF_URL;sc.onload=()=>res(window.jspdf);sc.onerror=()=>{jspdfP=null;rej(new Error('load'))};document.head.appendChild(sc)});return jspdfP}
+function asc(s){return String(s==null?'':s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/…/g,'...').replace(/·/g,'-').replace(/×/g,'x').replace(/[^\x00-\xFF]/g,'')}
+async function buildPdf(){
+  const {jsPDF}=await ensureJsPDF();
+  const doc=new jsPDF({unit:'mm',format:'a4'});const W=210,H=297,M=14,CW=W-2*M;let y=M;
+  const RED=[208,38,46],INK=[34,37,41],MUT=[95,99,104],LINE=[220,221,224],CELL=[244,244,245],GREEN=[46,154,85],AMBER=[201,138,0],SOFT=[252,235,236];
+  const font=(b,sz,c)=>{doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(sz);doc.setTextColor(...(c||INK))};
+  const page=()=>doc.internal.getCurrentPageInfo().pageNumber;
+  const links=[],anchors={};
+  const go=(x,yy,w,h,target)=>links.push({p:page(),x,y:yy,w,h,target});
+  const need=h=>{if(y+h>H-18){doc.addPage();y=M;return true}return false};
+  const bar=t=>{need(16);y+=3;doc.setFillColor(...RED);doc.roundedRect(M,y,CW,8,1.6,1.6,'F');font(1,10.5,[255,255,255]);doc.text(asc(t),M+3.5,y+5.5);y+=11.5};
+  const para=(t,sz,c)=>{font(0,sz||9.5,c);const L=doc.splitTextToSize(asc(t),CW);const lh=(sz||9.5)*0.46;need(L.length*lh+2);doc.text(L,M,y+3.3);y+=L.length*lh+3};
+  const table=(cols,rows)=>{
+    const pad=1.8,lh=3.9;
+    const head=()=>{doc.setDrawColor(...LINE);let x=M;const h=7;cols.forEach(c=>{doc.setFillColor(...CELL);doc.rect(x,y,c.w,h,'FD');font(1,8.3,MUT);doc.text(asc(c.h),c.a==='r'?x+c.w-pad:x+pad,y+4.7,{align:c.a==='r'?'right':'left'});x+=c.w});y+=h};
+    need(16);head();
+    rows.forEach(r=>{
+      const cells=r.map((v,i)=>{font(typeof v==='object'&&v.b?1:0,8.6);return doc.splitTextToSize(asc(typeof v==='object'?v.t:v),cols[i].w-2*pad)});
+      const h=Math.max(...cells.map(c=>c.length))*lh+2*pad;
+      if(need(h))head();
+      let x=M;doc.setDrawColor(...LINE);
+      if(r.go)go(M,y,CW,h,r.go);
+      cells.forEach((L,i)=>{const v=r[i],c=cols[i];doc.rect(x,y,c.w,h,'S');const o=typeof v==='object'?v:{};font(o.b?1:0,8.6,o.c||INK);doc.text(L,c.a==='r'?x+c.w-pad:x+pad,y+pad+2.9,{align:c.a==='r'?'right':'left'});x+=c.w});
+      y+=h;
+    });
+    y+=3;
+  };
+  const fl=findings(state.from,state.to),vl=visits(state.from,state.to);
+  const clients=[...new Set(vl.map(v=>v.client).concat(fl.map(f=>f.client)))];
+  const reps=REPORTS.filter(r=>clients.includes(r.client));const R0=reps[0]||REPORTS[0];
+  const WHO=c=>c==='Pest activity'||c==='Client complaint'?'Buckler':'Site team';
+  const SC={Ongoing:RED,Watch:AMBER,Resolved:GREEN},STX={Ongoing:'Still open',Watch:'Improving',Resolved:'Cleared'};
+  const iss=issuesOf(fl).sort((a,b)=>({Ongoing:0,Watch:1,Resolved:2}[a.it.status]-{Ongoing:0,Watch:1,Resolved:2}[b.it.status])||b.it.sevRank-a.it.sevRank||b.dates.size-a.dates.size);
+  // ---- page 1
+  doc.setFillColor(...RED);doc.roundedRect(M,y,12,13.5,2,2,'F');font(1,13,[255,255,255]);doc.text('B',M+6,y+9.3,{align:'center'});
+  font(1,19,RED);doc.text('SANITATION REPORT',W/2,y+7,{align:'center'});font(0,7.8,MUT);doc.text('MONTHLY ANALYSIS & ACTION SUMMARY',W/2,y+11.5,{align:'center',charSpace:0.6});
+  font(0,8,MUT);doc.text(['Buckler Pest Control','Generated: '+fmtDY(new Date())],W-M,y+4,{align:'right'});
+  y+=17;doc.setDrawColor(...RED);doc.setLineWidth(1.1);doc.line(M,y,W-M,y);doc.setLineWidth(0.2);y+=4;
+  doc.setFillColor(...SOFT);doc.roundedRect(M,y,CW,9,1.5,1.5,'F');font(1,9,RED);doc.text('Tap any problem, visit or recommendation to jump to its full details.',M+4,y+5.9);y+=12;
+  const eq=R0?R0.equipment:{rodent:0,snake:0,uv:0};
+  const info=[['Client',clients.length===1?clients[0]+(R0&&R0.client_code?' ('+R0.client_code+')':''):plural(clients.length,'client')],['Period',fmtDY(state.from)+' - '+fmtDY(state.to)],['Site',R0?R0.city:''],['Equipment',eq.rodent+' rodent, '+eq.snake+' snake bait stations, '+eq.uv+' UV fly machines']];
+  doc.setDrawColor(...LINE);
+  for(let i=0;i<info.length;i+=2){const h=10;[0,1].forEach(k=>{const it=info[i+k];if(!it)return;const x=M+k*CW/2;doc.setFillColor(...CELL);doc.rect(x,y,CW/2,h,'FD');font(1,8.6,MUT);doc.text(asc(it[0])+':',x+3,y+6.2);const tw=doc.getTextWidth(asc(it[0])+': ');font(0,8.6);doc.text(doc.splitTextToSize(asc(it[1]),CW/2-6-tw)[0],x+3+tw,y+6.2)});y+=h}
+  y+=2;
+  bar('1. Summary');para($('#briefing').textContent);
+  const m=metrics(fl,vl);
+  table([{h:'Visits',w:CW/6,a:'r'},{h:'Findings',w:CW/6,a:'r'},{h:'Still open',w:CW/6,a:'r'},{h:'Improving',w:CW/6,a:'r'},{h:'Cleared',w:CW/6,a:'r'},{h:'Bait hits',w:CW/6,a:'r'}],[[String(m.visits),String(m.findings),{t:String(m.ongoing),c:RED,b:1},{t:String(m.watch),c:AMBER,b:1},{t:String(m.resolved),c:GREEN,b:1},String(m.ra)]]);
+  bar('2. Problems & actions');anchors.problems=page();
+  table([{h:'Problem',w:50},{h:'Area',w:32},{h:'Visits',w:15,a:'r'},{h:'Status',w:22},{h:'Who acts',w:CW-137},{h:'',w:18}],iss.map(e=>Object.assign([{t:e.it.issue,b:1},[...e.it.locations].join(', '),e.dates.size+' / '+vl.length,{t:STX[e.it.status],c:SC[e.it.status],b:1},WHO(e.it.category),{t:'Details >',c:RED,b:1}],{go:'i:'+e.it.key})));
+  bar('3. Visits & device checks');anchors.visits=page();
+  table([{h:'Date',w:26},{h:'Type',w:24},{h:'Rodent',w:20,a:'r'},{h:'Snake',w:18,a:'r'},{h:'UV',w:18,a:'r'},{h:'Problems',w:20,a:'r'},{h:'Active stations',w:CW-144},{h:'',w:18}],vl.map(v=>{const n=fl.filter(f=>f.client===v.client&&f.date===v.date).length;return Object.assign([fmtDY(v._d),v.type,{t:v.rodent_active+'/'+v.rodent_checked,c:v.rodent_active?RED:INK,b:v.rodent_active?1:0},v.snake_active+'/'+v.snake_checked,v.uv_active+'/'+v.uv_checked,String(n),v.active_stations.length?v.active_stations.map(s=>s.no).join(', '):'-',{t:'Details >',c:RED,b:1}],{go:'v:'+v.key})}));
+  bar('4. What to do next');
+  table([{h:'#',w:9},{h:'Priority',w:24},{h:'Action',w:CW-51},{h:'',w:18}],RECS.map((r,i)=>Object.assign([String(i+1),{t:r.label,c:r.p===0?RED:INK,b:1},r.title+'. '+r.text,{t:'Details >',c:RED,b:1}],{go:'i:'+r.key})));
+  const gen=[...new Set(reps.flatMap(r=>r.general))];
+  if(gen.length){bar('5. Site requirements');gen.forEach((g,i)=>para((i+1)+'. '+g,9))}
+  need(24);y+=6;font(0,9);doc.text('Prepared by: ______________________',M,y);doc.text('Signature: ______________________',M,y+8);font(1,15,RED);doc.text('BUCKLER',W-M,y+2,{align:'right'});font(1,6.5,RED);doc.text('PEST CONTROL SERVICES',W-M,y+6,{align:'right',charSpace:0.8});
+  // ---- detail pages
+  const backLink=(label,target)=>{font(1,8.5,RED);const w=doc.getTextWidth(label);doc.text(label,W-M,y,{align:'right'});go(W-M-w-1,y-4,w+2,6,target)};
+  doc.addPage();y=M;bar('Problem details');
+  iss.forEach(e=>{
+    const it=e.it;const adv=doc.splitTextToSize(asc(adviceFor(it)),CW-8);
+    const est=26+adv.length*4.2+vl.length*5.2;
+    if(y+est>H-18){doc.addPage();y=M}
+    anchors['i:'+it.key]=page();
+    doc.setDrawColor(...SC[it.status]);doc.setLineWidth(1.2);doc.line(M,y,M,y+9);doc.setLineWidth(0.2);
+    font(1,12.5,INK);doc.text(asc(it.issue),M+3,y+4.5);
+    font(1,9,SC[it.status]);doc.text(STX[it.status],W-M,y+4.5,{align:'right'});
+    font(0,8.5,MUT);doc.text(asc([...it.locations].join(', ')+'  |  '+it.severity+' severity  |  Who acts: '+WHO(it.category)+'  |  Reported at '+e.dates.size+' of '+vl.length+' visits'),M+3,y+9.2);
+    y+=13;
+    doc.setFillColor(...SOFT);doc.roundedRect(M,y,CW,adv.length*4.2+7,1.5,1.5,'F');font(1,8,RED);doc.text('WHAT TO DO',M+4,y+4.5);font(0,9,INK);doc.text(adv,M+4,y+8.8);y+=adv.length*4.2+10;
+    vl.filter(v=>v.client===it.client).forEach(v=>{
+      const f=it.items.find(x=>x.date===v.date);
+      font(1,8.6,f?INK:MUT);doc.text(fmtD(v._d),M+3,y+3.5);
+      doc.setFillColor(...(f?SC[it.status]:LINE));doc.circle(M+22,y+2.4,1.3,'F');
+      font(0,8.6,f?INK:MUT);const t=doc.splitTextToSize(asc(f?f.description:'Not reported'),CW-50)[0];doc.text(t,M+26,y+3.5);
+      font(0,7.8,RED);doc.text('Visit >',W-M,y+3.5,{align:'right'});go(M,y,CW,5,'v:'+v.key);
+      y+=5.2;
+    });
+    y+=3;backLink('< Back to problems list','problems');y+=6;
+    doc.setDrawColor(...LINE);doc.line(M,y,W-M,y);y+=6;
+  });
+  doc.addPage();y=M;bar('Visit details');
+  vl.forEach(v=>{
+    const fs=fl.filter(f=>f.client===v.client&&f.date===v.date);
+    const work=doc.splitTextToSize(asc(v.actions.length?v.actions.join('; ')+'.':'No work notes.'),CW-6);
+    const est=34+work.length*4.2+fs.length*5.2;
+    if(y+est>H-18){doc.addPage();y=M}
+    anchors['v:'+v.key]=page();
+    doc.setDrawColor(...RED);doc.setLineWidth(1.2);doc.line(M,y,M,y+9);doc.setLineWidth(0.2);
+    font(1,12.5,RED);doc.text(asc('Visit - '+fmtDY(v._d)+(v.time?' at '+v.time:'')+' - '+v.type),M+3,y+4.5);
+    font(0,8.5,MUT);doc.text(asc('Conducted by '+(v.leader||'-')+'  |  '+v.status),M+3,y+9.2);y+=13;
+    font(1,8.6,INK);doc.text(asc('Rodent bait stations: '+v.rodent_active+' of '+v.rodent_checked+' with activity'+(v.active_stations.length?' (no. '+v.active_stations.map(s=>s.no).join(', ')+')':'')),M+3,y+3.5);y+=5;
+    doc.text(asc('Snake bait stations: '+v.snake_active+' of '+v.snake_checked+'   |   UV fly machines: '+v.uv_active+' of '+v.uv_checked),M+3,y+3.5);y+=7;
+    font(1,8,MUT);doc.text('WORK CARRIED OUT',M+3,y+3);y+=5;font(0,8.8,INK);doc.text(work,M+3,y+3);y+=work.length*4.2+3;
+    font(1,8,MUT);doc.text('PROBLEMS NOTED',M+3,y+3);y+=5;
+    if(!fs.length){font(0,8.8,MUT);doc.text('None.',M+3,y+3.5);y+=5.2}
+    fs.forEach(f=>{const st=ISSUES.get(f.ikey).status;doc.setFillColor(...SC[st]);doc.circle(M+4,y+2.4,1.3,'F');font(1,8.8,INK);const t=doc.splitTextToSize(asc(f.issue+': '+f.description),CW-40)[0];doc.text(t,M+8,y+3.5);font(0,7.8,RED);doc.text('Details >',W-M,y+3.5,{align:'right'});go(M,y,CW,5,'i:'+f.ikey);y+=5.2});
+    y+=3;backLink('< Back to visits list','visits');y+=6;
+    doc.setDrawColor(...LINE);doc.line(M,y,W-M,y);y+=6;
+  });
+  // ---- wire up internal links
+  links.forEach(l=>{const pg=anchors[l.target];if(!pg)return;doc.setPage(l.p);doc.link(l.x,l.y,l.w,l.h,{pageNumber:pg})});
+  const n=doc.getNumberOfPages();
+  for(let p=1;p<=n;p++){doc.setPage(p);doc.setDrawColor(...RED);doc.setLineWidth(0.8);doc.line(M,H-12,W-M,H-12);font(0,7.5,MUT);doc.text(asc('Buckler - Sanitation Report - '+(clients.length===1?clients[0]:'All clients')+' - '+fmtDY(state.from)+' to '+fmtDY(state.to)),M,H-8);doc.text('Page '+p+' of '+n,W-M,H-8,{align:'right'});if(p>1){font(1,7.5,RED);doc.text('Back to summary',W/2,H-4,{align:'center'});doc.link(W/2-14,H-7,28,5,{pageNumber:1})}}
+  return doc.output('blob');
+}
+function withData(html,viewOnly,lock){
+  html=html.replace(/<html[^>]*>/,'<html lang="en">').replace(/<head>[\s\S]*?(<meta charset="utf-8">)/,'<head>\n$1');
+  const OPEN='<scr'+'ipt id="preload">',CLOSE='</scr'+'ipt>';
+  html=html.replace(new RegExp(OPEN+'[\\s\\S]*?'+CLOSE+'\\n?'),'');
+  const pre=OPEN+'window.__PRELOAD='+JSON.stringify(lock?lockedReports(lock):REPORTS).replace(/</g,'\\u003c')+';window.__OVR='+JSON.stringify(overrides()).replace(/</g,'\\u003c')+';'+(viewOnly?'window.__VIEWONLY=true;':'')+(lock?'window.__LOCK='+JSON.stringify(lock).replace(/</g,'\\u003c')+';'+(window.__PIN?'window.__PIN="'+window.__PIN+'";':''):'')+CLOSE+'\n';
+  const i=html.lastIndexOf('<scr'+'ipt id="app">');
+  if(i<0)return html;
+  return html.slice(0,i)+pre+html.slice(i);
+}
+function lockedReports(lock){
+  const f=parseDate(lock.from),t=parseDate(lock.to),len=diff(f,t)+1,pf=addDays(f,-len);
+  const inR=d=>{const x=parseDate(d);return x&&x>=pf&&x<=t};
+  return REPORTS.filter(r=>r.client===lock.client).map(r=>Object.assign({},r,{visits:r.visits.filter(v=>inR(v.date)),findings:r.findings.filter(x=>inR(x.date||'')),file:''})).filter(r=>r.visits.length||r.findings.length);
+}
+let UNLOCKED=false;
+async function hashPin(p){const d=new TextEncoder().encode('buckler|'+p);try{if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest('SHA-256',d);return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(e){}let x=2166136261;for(const c of d){x^=c;x=Math.imul(x,16777619)>>>0}return 'f'+x.toString(16)}
+function pinModal(title,text,twice){return new Promise(res=>{
+  const w=document.createElement('div');w.className='pinw';
+  w.innerHTML='<div class="pinbox" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p><input type="password" autocomplete="off" placeholder="PIN" id="pin1">'+(twice?'<input type="password" autocomplete="off" placeholder="Repeat PIN" id="pin2">':'')+'<div class="pinerr" id="pinErr"></div><div class="pinact"><button class="btn" data-pin="x">Cancel</button><button class="btn primary" data-pin="ok">'+(twice?'Save PIN':'Unlock')+'</button></div></div>';
+  document.body.appendChild(w);const i1=w.querySelector('#pin1');i1.focus();
+  const done=v=>{w.remove();res(v)};
+  const ok=()=>{const v=i1.value.trim();if(v.length<4){w.querySelector('#pinErr').textContent='Use at least 4 digits or letters.';return}if(twice&&w.querySelector('#pin2').value.trim()!==v){w.querySelector('#pinErr').textContent='The two PINs don’t match.';return}done(v)};
+  w.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-pin]');if(b)b.dataset.pin==='ok'?ok():done(null);else if(e.target===w)done(null)});
+  w.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok()}if(e.key==='Escape')done(null)});
+})}
+async function clientExport(){
+  const clients=[...new Set(VISITS.map(v=>v.client))];
+  const client=state.client||(clients.length===1?clients[0]:'');
+  if(!client){toast('Choose the client in the Client filter first.');$('#fClient').focus();return null}
+  if(!window.__PIN){const p=await pinModal('Set your owner PIN','You will use this PIN to unlock editing inside the client file. The client only sees the report.',true);if(p==null)return null;window.__PIN=await hashPin(p)}
+  return withData(SELF_HTML,true,{client,from:iso(state.from),to:iso(state.to)});
+}
+function setLockUI(on){
+  const L=window.__LOCK;if(!L)return;
+  if(on){state.client=L.client;state.preset='custom';state.from=parseDate(L.from);state.to=parseDate(L.to);state.severity='';state.status=''}
+  ['#fPreset','#fFrom','#fTo','#fClient','#fSeverity','#fStatus'].forEach(sel=>{const el=$(sel);if(el){const w=el.closest('.f');if(w)w.hidden=on}});
+  ['#refreshBtn','#dataMenu'].forEach(sel=>{const el=$(sel);if(el)el.hidden=on});
+  ['json','app','client'].forEach(k=>{const b=$('[data-export="'+k+'"]');if(b)b.hidden=on});
+  let lbl=$('.lockinfo');if(!lbl){lbl=document.createElement('div');lbl.className='f lockinfo';const fl=$('.filters');fl.insertBefore(lbl,fl.firstChild)}
+  lbl.hidden=!on;lbl.innerHTML='<label>Report for</label><div><b>'+esc(L.client)+'</b><br><span>'+fmtDY(parseDate(L.from))+' to '+fmtDY(parseDate(L.to))+'</span></div>';
+  const sb=$('#shareBox');if(sb)sb.hidden=true;
+  const ob=$('#ownerBtn');if(ob)ob.hidden=!(on&&window.__PIN);
+  const bar=$('#ownerBar');if(bar){bar.hidden=on;bar.querySelector('span').innerHTML='<b>Owner mode.</b> The client sees <b>'+esc(L.client)+'</b>, '+fmtDY(parseDate(L.from))+' to '+fmtDY(parseDate(L.to))+'. To update what they see, choose the client and period, then Share / Download → Client file.'}
+}
+function applyLock(){setLockUI(true)}
+async function ownerLogin(){
+  if(!window.__PIN){toast('This file has no owner PIN.');return}
+  const p=await pinModal('Owner login','Enter your owner PIN to upload reports and edit this file.');if(p==null)return;
+  if(await hashPin(p)!==window.__PIN){toast('Wrong PIN.');return}
+  UNLOCKED=true;setMode('local');setLockUI(false);buildSelects();render();toast('Owner mode on. You can upload reports and edit.');
+}
+function backToClient(){UNLOCKED=false;setMode('viewer');setLockUI(true);buildSelects();render()}
+async function publishSelf(){
+  if(!artifactNS){toast('Saving to the shared link isn’t available in this view.');return false}
+  toast('Saving to the shared link…');
+  try{await artifactNS.publish(withData(SELF_HTML));toast('Saved. Everyone with the link now sees this version.');return true}
+  catch(e){const c=e&&e.code;if(c==='conflict')return false;if(c==='not_writer'||c==='not_granted'||c==='consent_required'){setMode('viewer');toast('This dashboard is view-only for you.');return false}toast(c==='rate_limited'?'Saving too often; wait a moment and try again.':'Couldn’t save the change ('+(c||'error')+').');return false}
+}
+function setMode(m){MODE=m;const edit=m!=='viewer';['#pdfBtn','#resetBtn'].forEach(sel=>{const el=$(sel);if(el)el.hidden=!edit});document.body.classList.toggle('viewonly',!edit);if(typeof render==='function'&&REPORTS.length)render()}
+function interactiveFile(){return withData(SELF_HTML)}
+function csvCell(v){v=String(v==null?'':v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function snapshot(){
+  const fl=findings(state.from,state.to),vl=visits(state.from,state.to);
+  const iss=issuesOf(fl).sort((a,b)=>b.dates.size-a.dates.size);
+  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sanitation summary '+stamp()+'</title><style>body{font:15px/1.5 system-ui,sans-serif;color:#15212A;max-width:1000px;margin:32px auto;padding:0 20px}h1{font-size:26px;margin:0}h2{font-size:18px;margin:26px 0 8px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #D5DDE2;vertical-align:top}th{color:#566873}.m{color:#566873}li{margin:5px 0}</style></head><body>'+
+  '<h1>Pest control sanitation summary</h1><p class="m">'+esc($('#subtitle').textContent)+'. Generated '+new Date().toLocaleString()+'.</p><h2>Summary</h2>'+$('#briefing').innerHTML+
+  '<h2>Recommendations</h2><ol>'+RECS.map(r=>'<li><b>'+esc(r.label)+': '+esc(r.title)+'.</b> '+esc(r.text)+'</li>').join('')+'</ol>'+
+  '<h2>Problems and recurrence</h2><table><tr><th>Problem</th><th>Type</th><th>Severity</th><th>Visits reported</th><th>Last reported</th><th>Status</th></tr>'+iss.map(e=>'<tr><td>'+esc(e.it.issue)+'</td><td>'+esc(e.it.category)+'</td><td>'+e.it.severity+'</td><td>'+e.dates.size+' of '+vl.length+'</td><td>'+e.it.last+'</td><td>'+e.it.status+'</td></tr>').join('')+'</table>'+
+  '<h2>Visits</h2><table><tr><th>Date</th><th>Type</th><th>Rodent</th><th>Snake</th><th>UV</th><th>Active stations</th></tr>'+vl.map(v=>'<tr><td>'+v.date+'</td><td>'+esc(v.type)+'</td><td>'+v.rodent_active+'/'+v.rodent_checked+'</td><td>'+v.snake_active+'/'+v.snake_checked+'</td><td>'+v.uv_active+'/'+v.uv_checked+'</td><td>'+esc(v.active_stations.map(s=>s.no).join(', '))+'</td></tr>').join('')+'</table>'+
+  '<h2>All findings ('+fl.length+')</h2><table><tr><th>Date</th><th>Problem</th><th>Detail</th><th>Location</th><th>Severity</th><th>Status</th></tr>'+fl.map(f=>'<tr><td>'+f.date+'</td><td>'+esc(f.issue)+'</td><td>'+esc(f.description)+'</td><td>'+esc(f.location)+'</td><td>'+f.severity+'</td><td>'+f.status+'</td></tr>').join('')+'</table></body></html>';
+}
+
+/* ---------- PDF import ---------- */
+const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+let pdfLoading=null,pdfCtl=null,pdfQueue=[],pdfBusy=false,pdfNew=[];
+function loadScript(src){return new Promise((res,rej)=>{const sc=document.createElement('script');sc.src=src;sc.onload=res;sc.onerror=()=>rej(new Error('load'));document.head.appendChild(sc)})}
+function withTimeout(p,ms,msg){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg)),ms))])}
+function ensurePdf(){
+  if(!pdfLoading&&window.pdfjsLib&&window.pdfjsWorker)pdfLoading=Promise.resolve(window.pdfjsLib);
+  if(!pdfLoading)pdfLoading=loadScript(PDFJS+'pdf.min.js').then(()=>loadScript(PDFJS+'pdf.worker.min.js')).then(()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+'pdf.worker.min.js';return window.pdfjsLib});
+  return pdfLoading;
+}
+async function readPdf(file,lib){
+  const doc=await lib.getDocument({data:await file.arrayBuffer()}).promise;const pages=[];
+  for(let p=1;p<=doc.numPages;p++){try{const pg=await doc.getPage(p);const tc=await pg.getTextContent();pages.push(tc.items.map(i=>i.str+(i.hasEOL?'\n':' ')).join(''))}catch(e){pages.push('')}}
+  return {doc,pages};
+}
+const KNOWN_ISSUES='"Doors left open","Gaps under doors","Wall openings","Gaps and openings in caravans","Drainage openings unsealed","Fly traps switched off","Traps in inaccessible locations","Traps moved","Waste accumulation","Poor hygiene","Standing water","Rooms unavailable for treatment","Cockroach infestation","Rodent caught on glue trap","Dead rats in electrical panel","Rodent burrows","Scorpion caught on trap","Snake sighting","Fly activity"';
+const RULES='You are reading a monthly pest control / sanitation service report (it may be in English or Arabic; the text may come from a PDF and be jumbled, or you may be given page images). Extract it for an analysis dashboard.\n'+
+ 'Reply with ONLY one JSON object with these keys:\n'+
+ '"client" (client name), "client_code", "city", "provider" (pest control company), "period_from" and "period_to" (YYYY-MM-DD),\n'+
+ '"equipment": {"rodent": number of rodent bait stations, "snake": number of snake bait stations, "uv": number of UV fly machines},\n'+
+ '"visits": one object per service visit: {"date":"YYYY-MM-DD","time":"HH:MM","type":"Regular|Inspection|Emergency|Follow-up","leader":"team leader","status":"Conducted|Missed|Postponed","rodent_active":n,"rodent_checked":n,"snake_active":n,"snake_checked":n,"uv_active":n,"uv_checked":n,"active_stations":[{"no":"6","comment":"Bait consumed."}],"actions":["short summary of each treatment or task done"]}. For "checked" use the total stations checked at that visit (active plus no-activity).\n'+
+ '"findings": every problem, observation or complaint noted in team leader, admin or client comments: {"date":"YYYY-MM-DD of the visit it was noted at","issue":"short standard label","category":"Pest activity|Client complaint|Proofing and openings|Site practices|Trap access|Hygiene and waste|Service limitation|Other","pest":"Rodent|Cockroach|Flies|Scorpion|Snake|Ants|Birds|General","location":"short area name, e.g. Caravan area, Doors and entrances, Walls, Electrical panel, UV fly machines, Glue traps, Site-wide","severity":"Low|Moderate|High","source":"Admin comment|Client comment|Team leader","description":"one short sentence","action":"treatment done for it, or empty"}.\n'+
+ 'For "issue", reuse one of these labels when it fits so problems can be tracked across visits and months: '+KNOWN_ISSUES+'. Otherwise write a short label of 2 to 5 words. Record the same problem again at every visit where it is noted. Do NOT add findings for bait consumed at stations; those go in active_stations. Routine work (spraying, rebaiting) is an action, not a finding. Severity: High for infestations, client complaints, dead or live rodents inside equipment or buildings; Moderate for proofing gaps, doors, traps off or blocked, waste; Low for minor notes.\n'+
+ '"general_comments": the report\'s general recommendations to the client, as short sentences.\n'+
+ 'Convert Hijri dates and Arabic-Indic digits. Do not invent anything that is not in the report.';
+function salvageJSON(t){if(!t)return null;const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<=a)return null;try{return JSON.parse(t.slice(a,b+1))}catch(e){return null}}
+async function ask(prompt,opts){
+  try{return await sampleFn.json(prompt,Object.assign({signal:pdfCtl.signal,modelTier:'default'},opts||{}))}
+  catch(e){if(e&&e.code==='invalid_json'){const r=salvageJSON(e.text);if(r)return r}throw e}
+}
+function mergeParts(parts){
+  const out={visits:[],findings:[],general_comments:[]};
+  parts.forEach(p=>{if(!p||typeof p!=='object')return;['client','client_code','city','provider','period_from','period_to'].forEach(k=>{if(!out[k]&&p[k])out[k]=p[k]});if(!out.equipment&&p.equipment)out.equipment=p.equipment;
+    (p.visits||[]).forEach(v=>{const ex=out.visits.find(x=>x.date===v.date);if(ex){['rodent_active','rodent_checked','snake_active','snake_checked','uv_active','uv_checked'].forEach(k=>{if(num(v[k])>num(ex[k]))ex[k]=v[k]});ex.active_stations=(ex.active_stations||[]).concat((v.active_stations||[]).filter(s=>!(ex.active_stations||[]).some(t=>String(t.no)===String(s.no))));ex.actions=(ex.actions||[]).concat(v.actions||[])}else out.visits.push(v)});
+    out.findings=out.findings.concat(p.findings||[]);out.general_comments=out.general_comments.concat(p.general_comments||[])});
+  out.visits.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  return out;
+}
+function logLine(id,name,msg,cls){let li=document.getElementById(id);if(!li){li=document.createElement('li');li.id=id;li.innerHTML='<span class="fn"></span><span class="st2"></span>';$('#pdfLog').appendChild(li)}li.querySelector('.fn').textContent=name;const st=li.querySelector('.st2');st.textContent=msg;st.className='st2 '+(cls||'muted')}
+function errText(e){const c=e&&e.code;return c==='not_granted'?'Permission to use Claude was not given. Try again and choose Allow.':c==='rate_limited'?'Too many requests right now; try again in a minute.':c==='cancelled'?'Stopped.':c?'Claude couldn’t read it ('+c+').':'Couldn’t open this PDF'+(e&&e.message?': '+e.message:'.')}
+
+/* ---------- direct reader for Buckler-format reports (no Claude needed) ---------- */
+const MONI={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function bDate(s){const m=String(s||'').match(/(\d{1,2})\s+([A-Za-z]{3,9})\.?\s+(\d{4})/);if(!m)return '';const mo=MONI[m[2].slice(0,3).toLowerCase()];return mo==null?'':iso(new Date(+m[3],mo,+m[1]))}
+const RULESET=[
+ [/(gap|opening|space).{0,40}(beneath|under|bottom).{0,20}door|bottom door gap|door gap|gaps? under/i,'Gaps under doors','Proofing and openings','General','Doors and entrances',1],
+ [/door.{0,40}(left )?open|left open/i,'Doors left open','Site practices','General','Doors and entrances',1],
+ [/caravan.{0,40}(gap|opening)|(gap|opening).{0,40}caravan/i,'Gaps and openings in caravans','Proofing and openings','General','Caravan area',1],
+ [/drain/i,'Drainage openings unsealed','Proofing and openings','General','Drains',1],
+ [/(fly ?trap|uv|insect).{0,40}(off)|switched off|turned off/i,'Fly traps switched off','Site practices','Flies','UV fly machines',1],
+ [/inaccessib|limited access|difficult to (reach|access)|blocked trap/i,'Traps in inaccessible locations','Trap access','General','Trap locations',1],
+ [/trap.{0,30}(moved|relocated|removed)|(moved|relocated|removed).{0,30}trap/i,'Traps moved','Site practices','General','Trap locations',1],
+ [/wall|opening|hole|crack/i,'Wall openings','Proofing and openings','General','Walls',1],
+ [/waste|garbage|rubbish|trash/i,'Waste accumulation','Hygiene and waste','General','Site-wide',1],
+ [/standing water|leak|stagnant/i,'Standing water','Hygiene and waste','General','Site-wide',1],
+ [/unavailable|could not be treated|not be treated|no access|locked|not accessible/i,'Rooms unavailable for treatment','Service limitation','General','Rooms',1]
+];
+const PESTRULES=[
+ [/dead (rat|rodent|mouse|mice)/i,t=>/panel|electric/i.test(t)?'Dead rats in electrical panel':'Dead rodents found','Rodent',t=>/panel|electric/i.test(t)?'Electrical panel':'Site-wide',2],
+ [/cockroach/i,()=>'Cockroach infestation','Cockroach',t=>/caravan/i.test(t)?'Caravan area':'Site-wide',2],
+ [/(mouse|mice|rat|rodent).{0,40}(caught|captured|trapped)|(caught|captured|trapped).{0,40}(mouse|mice|rat|rodent)|\b(mouse|mice)\b/i,()=>'Rodent caught on glue trap','Rodent',()=>'Glue traps',1],
+ [/scorpion/i,()=>'Scorpion caught on trap','Scorpion',()=>'Glue traps',1],
+ [/snake/i,()=>'Snake sighting','Snake',()=>'Site-wide',2],
+ [/\bants?\b/i,()=>'Ant activity','Ants',()=>'Site-wide',1],
+ [/\bflies\b|fly activity/i,()=>'Fly activity','Flies',()=>'Site-wide',1]
+];
+function classify(text,source,date){
+  const out=[];
+  PESTRULES.forEach(([re,lab,pest,loc,sev])=>{if(re.test(text))out.push({date,issue:lab(text),category:source==='Client comment'?'Client complaint':'Pest activity',pest,location:loc(text),severity:SEVS[source==='Client comment'?2:sev],source,description:text})});
+  if(out.length)return out;
+  const r=RULESET.find(([re])=>re.test(text));
+  if(r){let loc=r[4];if(r[1]==='Rooms unavailable for treatment'&&/caravan/i.test(text))loc='Caravan area';return [{date,issue:r[1],category:source==='Client comment'?'Client complaint':r[2],pest:r[3],location:loc,severity:SEVS[source==='Client comment'?2:r[5]],source,description:text}]}
+  return [{date,issue:text.replace(/[.;:]+$/,'').split(/\s+/).slice(0,6).join(' '),category:source==='Client comment'?'Client complaint':'Other',pest:'General',location:'Site-wide',severity:source==='Client comment'?'High':'Moderate',source,description:text}];
+}
+const FINDING_TL=/captured|caught|dead|detected|infestation|sighted|seen|found|could not|unavailable|not be treated|activity/i;
+function parseBuckler(pages){
+  const raw=pages.join('\n').replace(/\u00a0/g,' ');
+  if(!/SANITATION REPORT/i.test(raw)||!/Visit\s*[—–-]\s*\d/.test(raw))return null;
+  const lines=raw.split('\n').map(l=>l.replace(/[ \t]+/g,' ').trim()).filter(Boolean);
+  const all=lines.join('\n');
+  const g=(re)=>{const m=all.match(re);return m?m[1].trim():''};
+  let client=g(/Client name:\s*([^\n]+)/);
+  const ci=lines.findIndex(l=>/Client name:/.test(l));if(ci>=0&&lines[ci+1]&&!/:/.test(lines[ci+1])&&!/^Region/i.test(lines[ci+1]))client+=' '+lines[ci+1];
+  client=client.replace(/\s+/g,' ').trim();
+  const per=all.match(/Period:\s*(\d{1,2}\s+\w+\s+\d{4})\s*[—–-]+\s*(\d{1,2}\s+\w+\s+\d{4})/);
+  const rep={client,client_code:g(/Client code:\s*(\S+)/),city:(g(/Region\s*\/\s*City:\s*([^\n]*?)\s+Period:/)||'').split('/').pop().trim(),provider:'Buckler Pest Control',
+    period_from:per?bDate(per[1]):'',period_to:per?bDate(per[2]):'',
+    equipment:{rodent:+g(/(\d+)\s+rodent bait stations/i)||0,snake:+g(/(\d+)\s+snake bait stations/i)||0,uv:+g(/(\d+)\s+UV/i)||0},
+    visits:[],findings:[],general_comments:[],leader:g(/Conducted by:\s*(.+?)\s+Site equipment/),prepared:g(/Prepared by:\s*([^\n]+)/)};
+  const sched={};lines.forEach(l=>{const m=l.match(/^\d+\s+(\d{1,2}\s+\w{3,9}\s+\d{4})\s+(\d{1,2}:\d{2})\s+(\w+)\s+(.+?)\s+(Conducted|Missed|Postponed|Cancelled|Scheduled|Pending)/i);if(m)sched[bDate(m[1])]={time:m[2],type:m[3],leader:m[4],status:titleCase(m[5].toLowerCase())}});
+  let v=null,mode='',inGen=false,lastF=null,lastA=null;
+  const push=()=>{if(v)rep.visits.push(v)};
+  for(const l of lines){
+    let m;
+    if(/^Trend analysis/i.test(l)||/^General comments/i.test(l)){push();v=null;inGen=/^General/i.test(l);mode='';continue}
+    if(inGen){if(/^Prepared by|^Signature|^Buckler/i.test(l)){inGen=false;continue}if(/^\d+\.\s*/.test(l))rep.general_comments.push(l.replace(/^\d+\.\s*/,''));else if(rep.general_comments.length)rep.general_comments[rep.general_comments.length-1]+=' '+l;continue}
+    if((m=l.match(/^Visit\s*[—–-]\s*(\d{1,2}\s+\w+\s+\d{4})(?:\s+at\s+(\d{1,2}:\d{2}))?\s*[·•|-]?\s*([A-Za-z-]+)?.*?(?:Conducted by\s+(.+))?$/))){
+      push();const d=bDate(m[1]);const sc=sched[d]||{};
+      v={date:d,time:m[2]||sc.time||'',type:titleCase(m[3]||sc.type||'Regular'),leader:(m[4]||sc.leader||rep.leader||'').trim(),status:sc.status||'Conducted',rodent_active:0,rodent_checked:0,snake_active:0,snake_checked:0,uv_active:0,uv_checked:0,active_stations:[],actions:[]};
+      mode='';lastF=lastA=null;continue}
+    if(!v)continue;
+    if(/^TEAM LEADER COMMENT/i.test(l)){mode='tl';continue}
+    if(/^ADMIN COMMENT/i.test(l)){mode='admin';continue}
+    if(/^CLIENT COMMENT/i.test(l)){mode='client';continue}
+    if(/^Findings\s*&?\s*Observations:?$/i.test(l)){mode='tlf';continue}
+    if((m=l.match(/^(RODENT|SNAKE)\s+BAIT STATIONS\s*[—–-]\s*(\d+)\s+of\s+(\d+).*?(\d+)\s+checked/i))||(m=l.match(/^(UV)\s+FLY MACHINES\s*[—–-]\s*(\d+)\s+of\s+(\d+).*?(\d+)\s+checked/i))){
+      const k=m[1].toLowerCase();v[k+'_active']=+m[2];v[k+'_checked']=+m[2]+ +m[4];mode=k==='rodent'?'st':'';continue}
+    if(/^Station no\./i.test(l)){mode='st';continue}
+    if(mode==='st'){if((m=l.match(/^(\d+)\s+(.*?)\s*[—–-]?\s*$/))){v.active_stations.push({no:m[1],comment:m[2]||'Activity recorded.'})}continue}
+    const cont=/^[a-z(]/.test(l);
+    if(mode==='admin'||mode==='client'){
+      if(cont&&lastF){lastF.forEach(x=>x.description+=' '+l);continue}
+      lastF=classify(l,mode==='admin'?'Admin comment':'Client comment',v.date);rep.findings.push(...lastF);continue}
+    if(mode==='tl'||mode==='tlf'){
+      if(cont){if(lastF){lastF.forEach(x=>x.description+=' '+l);continue}if(lastA!=null){v.actions[lastA]+=' '+l;continue}}
+      if(mode==='tlf'||FINDING_TL.test(l)&&!/^(Rodent|Snake|Cage|Burrow|Internal|Indoor|Exterior|Interior|Facilities|Fly|Power|Electrical)[^:]*:/i.test(l)){
+        if(/^(consumed bait found;?\s*)$/i.test(l))continue;
+        lastF=classify(l,'Team leader',v.date);rep.findings.push(...lastF);lastA=null}
+      else{const a=l.includes(':')&&l.split(':')[1].trim()?l.split(':').slice(1).join(':').trim():l;v.actions.push(a.replace(/\.$/,''));lastA=v.actions.length-1;lastF=null}
+    }
+  }
+  push();
+  rep.findings.forEach(f=>{f.description=f.description.replace(/\s+/g,' ').trim()});
+  if(!rep.visits.length)return null;
+  rep.id=(rep.client_code||rep.client)+'|'+rep.period_from;
+  return rep;
+}
+async function readOne(f,id,lib,limits){
+  logLine(id,f.name,'Reading text…');
+  const {doc,pages}=await withTimeout(readPdf(f,lib),90000,'reading took too long');
+  const direct=parseBuckler(pages);
+  if(direct){direct.file=f.name;return direct}
+  if(!sampleFn){logLine(id,f.name,'This file isn’t in the Buckler report layout. Open the dashboard from its claude.ai link to read it.','err');return null}
+  const text=pages.join(' ').replace(/\s+/g,'');
+  const parts=[];
+  if(text.length>=150){
+    const groups=[];let cur='';pages.forEach((t,i)=>{const b='[Page '+(i+1)+']\n'+t+'\n\n';if(cur&&(cur+b).length>40000){groups.push(cur);cur=''}cur+=b});if(cur)groups.push(cur);
+    for(let g=0;g<groups.length;g++){if(pdfCtl.signal.aborted)return null;logLine(id,f.name,'Claude is reading'+(groups.length>1?' part '+(g+1)+' of '+groups.length:'')+'…');parts.push(await ask(RULES+'\n\nFile: "'+f.name+'"'+(groups.length>1?' (part '+(g+1)+' of '+groups.length+'; other parts are read separately)':'')+'\n<report>\n'+groups[g]+'\n</report>'))}
+  }
+  let out=mergeParts(parts);
+  if((!out.visits.length&&!out.findings.length)&&limits&&limits.images){
+    const per=Math.max(1,Math.min(limits.images.maxCount||5,5)),maxP=Math.min(doc.numPages,30);const iparts=[];
+    for(let p=1;p<=maxP;p+=per){
+      if(pdfCtl.signal.aborted)return null;const last=Math.min(maxP,p+per-1);logLine(id,f.name,'Reading page images '+p+'–'+last+' of '+doc.numPages+'…');
+      const imgs=[];for(let q=p;q<=last;q++){const pg=await doc.getPage(q);const vp=pg.getViewport({scale:1.4});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:x,viewport:vp}).promise;imgs.push(await new Promise(r=>c.toBlob(r,'image/jpeg',.82)))}
+      iparts.push(await ask(RULES+'\n\nThe images are pages '+p+' to '+last+' of "'+f.name+'".',{images:imgs}));
+    }
+    out=mergeParts(iparts);
+  }else if(!out.visits.length&&!out.findings.length&&text.length<150){logLine(id,f.name,'No readable text (scanned), and page images can’t be sent from this view. Upload it in the chat instead.','err');return null}
+  out.file=f.name;
+  return out;
+}
+async function importPdfs(files){
+  pdfBusy=true;pdfNew=[];pdfCtl=new AbortController();
+  $('#pdfStage').hidden=true;$('#pdfStart').hidden=true;$('#pdfSummary').hidden=true;$('#pdfTitle').textContent='Reading '+plural(files.length,'report');$('#pdfStop').textContent='Stop';
+  $('#pdfLog').innerHTML='';files.forEach((f,i)=>logLine('pl'+i,f.name,'Waiting'));
+  let lib;try{logLine('pl0',files[0].name,'Loading PDF reader…');lib=await withTimeout(ensurePdf(),30000,'timeout')}catch(e){pdfLoading=null;logLine('pl0',files[0].name,'The PDF reader could not load. Check your connection and try again.','err');return finishPdf()}
+  logLine('pl0',files[0].name,'Waiting');
+  const limits=sampleFn?await sampleFn.limits().catch(()=>null):null;
+  let next=0;
+  const worker=async()=>{while(next<files.length&&!pdfCtl.signal.aborted){const i=next++,f=files[i],id='pl'+i;
+    try{const r=await readOne(f,id,lib,limits);if(!r)continue;const c=cleanReport(Object.assign({},r,{general:r.general_comments}));
+      if(!c.visits.length&&!c.findings.length){logLine(id,f.name,'No visits or problems recognised in this file.','err');continue}
+      pdfNew.push(c);logLine(id,f.name,plural(c.visits.length,'visit')+', '+plural(c.findings.length,'finding')+', '+plural(c.visits.reduce((a,v)=>a+v.rodent_active,0),'station hit'),'ok');
+    }catch(e){logLine(id,f.name,errText(e),'err');if(e&&(e.code==='not_granted'||e.code==='cancelled'))pdfCtl.abort()}}};
+  await Promise.all([worker(),worker()]);
+  finishPdf();
+}
+function finishPdf(){
+  pdfBusy=false;pdfQueue=[];$('#pdfStop').textContent='Close';const sum=$('#pdfSummary');sum.hidden=false;
+  if(!pdfNew.length){sum.innerHTML='<b>Nothing was added.</b> The status next to each file says why. You can also upload the PDF in the chat so it can be checked there.';return}
+  if(MODE!=='local'){const m2=new Map();REPORTS.forEach(r=>m2.set(r.id,r));pdfNew.forEach(r=>m2.set(r.id,r));window.__PRELOAD=[...m2.values()];loadReports();FKEYS.forEach(k=>state[k]='');state.q='';state.preset=REPORTS.length>1?'all':'latest';applyPreset();buildSelects();render();sum.innerHTML='<b>'+plural(pdfNew.length,'report')+' added.</b> Saving to the shared link so everyone who opens it sees the update…';$('#pdfStop').textContent='View dashboard';publishSelf();return}
+  const map=new Map();userReports().forEach(r=>map.set(r.id||((r.client_code||r.client)+'|'+r.period_from),r));pdfNew.forEach(r=>map.set(r.id,r));
+  saveUserReports([...map.values()]);
+  const before=REPORTS.length;loadReports();if(REPORTS.length===before&&!USER_ADDED){pdfNew.forEach(r=>{REPORTS=REPORTS.filter(x=>x.id!==r.id).concat([r])});build()}
+  FKEYS.forEach(k=>state[k]='');state.q='';state.preset=pdfNew.length>1||REPORTS.length>1?'all':'latest';applyPreset();buildSelects();render();
+  sum.innerHTML='<b>The dashboard now includes '+plural(pdfNew.length,'new report')+'.</b> A report for the same client and month replaces the earlier copy. Spot-check a few findings against the originals.';
+  $('#pdfStop').textContent='View dashboard';
+}
+function openStage(){
+  if(pdfBusy)return;
+  if(!$('#pdfModal').classList.contains('open')){pdfQueue=[];$('#pdfLog').innerHTML='';$('#pdfSummary').hidden=true}
+  {$('#pdfStage').hidden=false;$('#pdfIntro').textContent=sampleFn?'Buckler monthly reports are read directly. Other report layouts are read by Claude, using your own Claude usage.':'Buckler monthly reports are read directly on this device. Other layouts need the claude.ai link version.';$('#pdfTitle').textContent='Add your PDF reports';$('#pdfStop').textContent='Cancel';renderQueue()}
+  $('#pdfModal').classList.add('open');$('#pdfScrim').classList.add('open');
+}
+function addToQueue(files){if(MODE==='viewer')return;const pdfs=[...files].filter(f=>/\.pdf$/i.test(f.name)||f.type==='application/pdf');openStage();pdfs.forEach(f=>{if(!pdfQueue.some(q=>q.name===f.name&&q.size===f.size))pdfQueue.push(f)});renderQueue();if(files.length>pdfs.length)toast(plural(files.length-pdfs.length,'file')+' skipped because only PDFs can be read.')}
+function renderQueue(){$('#pdfLog').innerHTML=pdfQueue.map((f,i)=>'<li><span class="fn">'+esc(f.name)+'</span><span><span class="muted small">'+(f.size<1048576?Math.max(1,Math.round(f.size/1024))+' KB':(f.size/1048576).toFixed(1)+' MB')+'</span> <button class="qrm" data-qrm="'+i+'">Remove</button></span></li>').join('');$('#pdfStart').hidden=!pdfQueue.length;$('#pdfStart').textContent='Read '+plural(pdfQueue.length,'file')}
+function closePdf(){$('#pdfModal').classList.remove('open');$('#pdfScrim').classList.remove('open')}
+
+/* ---------- events ---------- */
+function bind(){
+  $('#fPreset').addEventListener('change',e=>{state.preset=e.target.value;applyPreset();state.page=0;render()});
+  ['#fFrom','#fTo'].forEach(s=>$(s).addEventListener('change',()=>{const f=parseDate($('#fFrom').value),t=parseDate($('#fTo').value);if(!f||!t)return;if(f>t){toast('The start date must be before the end date.');syncControls();return}state.from=f;state.to=t;state.preset='custom';render()}));
+  $$('select[data-key]').forEach(sel=>sel.addEventListener('change',()=>setFilter(sel.dataset.key,sel.value)));
+  let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{state.q=e.target.value.trim();state.page=0;render();$('#q').focus()},220)});
+  $('#clearBtn').addEventListener('click',()=>{FKEYS.forEach(k=>{if(!(window.__LOCK&&k==='client'))state[k]=''});state.q='';render()});
+  $('#refreshBtn').addEventListener('click',()=>{loadReports();buildSelects();render();toast('Recalculated from the loaded reports.')});
+  $('#resetBtn').addEventListener('click',()=>{if(MODE!=='local'){if(!confirm('Remove all uploaded reports from the shared dashboard? The original August report stays.'))return;window.__PRELOAD=null;window.__OVR={};loadReports();state.preset='latest';applyPreset();buildSelects();render();publishSelf();return}try{localStorage.removeItem(LS_KEY)}catch(e){}loadReports();state.preset='latest';applyPreset();buildSelects();render();toast('Uploaded reports removed.')});
+  $('#copyLink').addEventListener('click',async e=>{e.stopPropagation();const inp=$('#shareUrl');let ok=false;try{await navigator.clipboard.writeText(inp.value);ok=true}catch(err){try{inp.focus();inp.select();ok=document.execCommand('copy')}catch(e2){}}if(ok){$('#copyLink').textContent='Copied';setTimeout(()=>{$('#copyLink').textContent='Copy link'},1800);toast('Link copied. Paste it to your client.')}else{inp.focus();inp.select();toast('Press Ctrl+C (or long-press and Copy) to copy the selected link.')}});
+  $('#shareUrl').addEventListener('click',e=>{e.stopPropagation();e.target.select()});
+  $('#tapX').addEventListener('click',()=>{$('#tapNote').hidden=true;try{sessionStorage.setItem('tapnote','x')}catch(e){}});
+  try{if(sessionStorage.getItem('tapnote'))$('#tapNote').hidden=true}catch(e){}
+  $('#ownerBtn').addEventListener('click',ownerLogin);$('#ownerBack').addEventListener('click',backToClient);
+  $('#pdfBtn').addEventListener('click',openStage);
+  $('#pdfAddMore').addEventListener('click',()=>{$('#pdfInput').value='';$('#pdfInput').click()});
+  $('#pdfInput').addEventListener('change',e=>{if(e.target.files.length)addToQueue([...e.target.files])});
+  $('#pdfStart').addEventListener('click',()=>{if(pdfQueue.length)importPdfs(pdfQueue.slice())});
+  $('#pdfLog').addEventListener('click',e=>{const b=e.target.closest('[data-qrm]');if(b){pdfQueue.splice(+b.dataset.qrm,1);renderQueue()}});
+  $('#pdfStop').addEventListener('click',()=>{if(pdfBusy&&pdfCtl)pdfCtl.abort();else{pdfQueue=[];closePdf()}});
+  $('#pdfScrim').addEventListener('click',()=>{if(!pdfBusy)closePdf()});
+  let dn=0;const hasF=e=>e.dataTransfer&&[...e.dataTransfer.types].includes('Files');
+  document.addEventListener('dragenter',e=>{if(!hasF(e)||pdfBusy)return;e.preventDefault();dn++;document.body.classList.add('dragging')});
+  document.addEventListener('dragover',e=>{if(hasF(e))e.preventDefault()});
+  document.addEventListener('dragleave',()=>{dn=Math.max(0,dn-1);if(!dn)document.body.classList.remove('dragging')});
+  document.addEventListener('drop',e=>{if(!hasF(e))return;e.preventDefault();dn=0;document.body.classList.remove('dragging');if(!pdfBusy)addToQueue([...e.dataTransfer.files])});
+  $('#scrim').addEventListener('click',closeDrawer);$('#dClose').addEventListener('click',closeDrawer);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();if(!pdfBusy)closePdf();$$('.menu').forEach(m=>m.classList.remove('open'))}
+    if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr[data-issue],tr.mxrow,g[data-visit],th[data-sort]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+  $$('[data-export]').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.export;
+    if(t==='csv'){const fl=findings(state.from,state.to);const cols=['id','date','client','issue','category','pest','location','severity','status','source','description','action'];save('findings_'+stamp()+'.csv',[cols.join(',')].concat(fl.map(f=>cols.map(c=>csvCell(f[c])).join(','))).join('\n'))}
+    else if(t==='json')save('pest-reports_'+stamp()+'.json',JSON.stringify(REPORTS,null,2));
+    else if(t==='pdf'){toast('Preparing the PDF…');buildPdf().then(b=>save('Buckler_Sanitation_Report_'+stamp()+'.pdf',b)).catch(()=>toast('The PDF tool couldn’t load. Check your connection and try again.'))}
+    else if(t==='client'){clientExport().then(h=>{if(h)save('Buckler_Dashboard_'+(state.client||'client').replace(/[^A-Za-z0-9]+/g,'_').slice(0,30)+'_'+stamp()+'.html',h)})}
+    else if(t==='app')save('Buckler_Sanitation_Dashboard_'+stamp()+'.html',interactiveFile());
+    else save('sanitation-summary_'+stamp()+'.html',snapshot())}));
+  document.addEventListener('click',e=>{
+    const t=e.target,mb=t.closest('[data-menu]');
+    if(mb){const m=mb.parentElement,o=!m.classList.contains('open');$$('.menu').forEach(x=>x.classList.remove('open'));if(o)m.classList.add('open');return}
+    if(t.closest('#shareBox'))return;
+    if(!t.closest('.menu')||t.closest('.menu-list button'))$$('.menu').forEach(x=>x.classList.remove('open'));
+    let el;
+    if((el=t.closest('[data-ovr]'))){const k=el.dataset.ovr;setOverride(k,el.dataset.ovs);build();render();openIssue(k);toast(el.dataset.ovs?'Status updated.':'Back to automatic status.');return}
+    if((el=t.closest('[data-clear]'))){state[el.dataset.clear]='';render();return}
+    if((el=t.closest('[data-f]'))){setFilter(el.dataset.f,el.dataset.v,true);return}
+    if((el=t.closest('[data-visit]'))){openVisit(el.dataset.visit);return}
+    if((el=t.closest('[data-station]'))){openStation(el.dataset.station);return}
+    if((el=t.closest('[data-issuefilter]'))){const it=ISSUES.get(el.dataset.issuefilter);if(it){FKEYS.forEach(k=>state[k]='');state.q=it.issue;state.client=it.client;closeDrawer();render();$('#table').scrollIntoView({behavior:'smooth',block:'start'})}return}
+    if((el=t.closest('[data-issue]'))){openIssue(el.dataset.issue);return}
+    if((el=t.closest('[data-tab]'))){state.tab=el.dataset.tab;render();return}
+    if((el=t.closest('[data-cmp]'))){state.cmp=el.dataset.cmp;render();return}
+    if((el=t.closest('[data-kpi]'))){const k=el.dataset.kpi;const target={visits:'#visits',open:'#issues',resolved:'#issues',stations:'#stations',matrix:'#matrix'}[k];if(k==='open'||k==='resolved'){state.tab=k;render()}const n=$(target);if(n)n.scrollIntoView({behavior:'smooth',block:'center'});return}
+    if((el=t.closest('[data-sort]'))){const k=el.dataset.sort;state.sort=state.sort.k===k?{k,dir:-state.sort.dir}:{k,dir:k==='date'||k==='severity'?-1:1};render();return}
+    if((el=t.closest('[data-page]'))){state.page+=+el.dataset.page;render();return}
+  });
+}
+
+/* ---------- init ---------- */
+(function reorder(){const wrap=$('.wrap');const sec=id=>$('#'+id).closest('section');const order=[sec('briefing'),sec('issues'),sec('matrix'),sec('trend'),sec('stations'),sec('visits'),sec('table')];const anchor=sec('briefing').nextSibling;let ref=sec('briefing');order.slice(1).forEach(n=>{if(n&&n!==ref){ref.after(n);ref=n}})})();
+loadReports();applyPreset();buildSelects();bind();applyLock();if(MODE==='viewer'){$('#pdfBtn').hidden=true;$('#resetBtn').hidden=true;if(window.__VIEWONLY){const sb=$('#shareBox');if(sb)sb.hidden=true}}render();
+$$('[data-dl]').forEach(b=>{b.disabled=true});
+if(window.claude&&typeof window.claude.use==='function'){
+  window.claude.use('downloads').then(d=>{downloads=d;if(d)$$('[data-dl]').forEach(b=>{b.disabled=false});else $('#exportHint').textContent='Export isn’t available in this view.'}).catch(()=>{});
+  window.claude.use('sample').then(s=>{sampleFn=s}).catch(()=>{});
+  if(!window.__VIEWONLY)Promise.all([window.claude.use('artifact'),window.claude.use('user')]).then(async([a,u])=>{artifactNS=a;let ed=null;if(u){try{const o=await u.isOwner();if(o)ed=true}catch(e){}if(ed==null){try{const c=await u.canEdit();ed=c===true?true:c===false?false:null}catch(e){}}}if(ed==null)ed=!!a;setMode(a&&ed?'owner':'viewer')}).catch(()=>setMode('local'));
+}else{$$('[data-dl]').forEach(b=>{b.disabled=false});$('.sb-n').textContent='This link opens the online dashboard (view only for clients).'}
+})();
+</script></body></html>
